@@ -268,6 +268,14 @@ a:hover {
     margin-bottom: 1rem;
     color: var(--accent-primary);
     text-shadow: 0 2px 4px var(--shadow-color);
+    /* Typewriter animation setup */
+    overflow: hidden;
+    border-right: 3px solid var(--accent-primary);
+    white-space: nowrap;
+    margin: 0 auto;
+    animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
+    animation-fill-mode: forwards;
+    opacity: 0;
 }
 
 .hero-subtitle {
@@ -276,6 +284,35 @@ a:hover {
     color: var(--text-secondary);
     margin-bottom: 2rem;
     font-weight: normal;
+    /* Typewriter animation setup */
+    overflow: hidden;
+    border-right: 3px solid var(--accent-primary);
+    white-space: nowrap;
+    margin: 0 auto;
+    animation: typing 2s steps(40, end) 0.5s, blink-caret 0.75s step-end infinite 0.5s;
+    animation-fill-mode: forwards;
+    opacity: 0;
+}
+
+/* Typewriter animation keyframes */
+@keyframes typing {
+    from {
+        width: 0;
+        opacity: 1;
+    }
+    to {
+        width: 100%;
+        opacity: 1;
+    }
+}
+
+@keyframes blink-caret {
+    from, to {
+        border-color: transparent;
+    }
+    50% {
+        border-color: var(--accent-primary);
+    }
 }
 
 .hero-buttons {

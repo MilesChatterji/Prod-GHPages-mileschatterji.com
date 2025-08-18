@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add scroll effects
     initializeScrollEffects();
+    
+    // Initialize typewriter animation
+    initializeTypewriterAnimation();
 });
 
 function initializeSite() {
@@ -182,6 +185,43 @@ function initializeSearch() {
             item.style.display = matches ? 'block' : 'none';
         });
     });
+}
+
+// Typewriter Animation
+function initializeTypewriterAnimation() {
+    const heroTitle = document.querySelector('.hero-title');
+    const heroSubtitle = document.querySelector('.hero-subtitle');
+    
+    if (heroTitle && heroSubtitle) {
+        // Store original text
+        const titleText = heroTitle.textContent;
+        const subtitleText = heroSubtitle.textContent;
+        
+        // Clear text initially
+        heroTitle.textContent = '';
+        heroSubtitle.textContent = '';
+        
+        // Type title first
+        typeText(heroTitle, titleText, 0, () => {
+            // After title is done, start subtitle with 0.5s delay
+            setTimeout(() => {
+                typeText(heroSubtitle, subtitleText, 0);
+            }, 500);
+        });
+    }
+}
+
+function typeText(element, text, index, callback) {
+    if (index < text.length) {
+        element.textContent += text.charAt(index);
+        setTimeout(() => {
+            typeText(element, text, index + 1, callback);
+        }, 100); // Adjust speed here (lower = faster)
+    } else {
+        // Remove the cursor after typing is complete
+        element.style.borderRight = 'none';
+        if (callback) callback();
+    }
 }
 
 // Utility functions
