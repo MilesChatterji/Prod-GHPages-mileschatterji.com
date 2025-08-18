@@ -262,18 +262,20 @@ a:hover {
 }
 
 .hero-title {
+    font-family: var(--font-heading);
     font-size: 3.5rem;
-    font-weight: 700;
+    font-weight: normal;
     margin-bottom: 1rem;
     color: var(--accent-primary);
     text-shadow: 0 2px 4px var(--shadow-color);
 }
 
 .hero-subtitle {
+    font-family: var(--font-heading);
     font-size: 1.3rem;
     color: var(--text-secondary);
     margin-bottom: 2rem;
-    font-weight: 300;
+    font-weight: normal;
 }
 
 .hero-buttons {
