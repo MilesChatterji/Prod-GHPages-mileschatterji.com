@@ -1,5 +1,16 @@
 /* Main CSS - Color Scheme: Dark Gray Background, White Text, Amber Hover */
 
+/* Import NDOT 47 Font */
+@font-face {
+    font-family: 'NDOT 47';
+    src: url('/assets/fonts/NDOT47.woff2') format('woff2'),
+         url('/assets/fonts/NDOT47.woff') format('woff'),
+         url('/assets/fonts/NDOT47.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 :root {
     --bg-primary: #2a2a2a;
     --bg-secondary: #3a3a3a;
@@ -13,6 +24,7 @@
     --border-color: #555555;
     --shadow-color: rgba(0, 0, 0, 0.3);
     --transition-speed: 0.3s;
+    --font-heading: 'NDOT 47', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 * {
@@ -36,6 +48,16 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1.3;
     margin-bottom: 1rem;
     color: var(--text-primary);
+}
+
+/* NDOT 47 Font for Headings */
+h1, h2 {
+    font-family: var(--font-heading);
+    font-weight: normal; /* NDOT 47 typically works better with normal weight */
+}
+
+h3, h4, h5, h6 {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 h1 { font-size: 2.5rem; }
