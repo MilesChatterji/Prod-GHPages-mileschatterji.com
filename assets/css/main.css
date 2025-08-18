@@ -456,6 +456,14 @@ a:hover {
 .biography-intro h2 {
     color: var(--accent-primary);
     margin-bottom: 1rem;
+    /* Typewriter animation setup */
+    overflow: hidden;
+    border-right: 3px solid var(--accent-primary);
+    white-space: nowrap;
+    margin: 0 auto;
+    animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
+    animation-fill-mode: forwards;
+    opacity: 0;
 }
 
 .lead {
@@ -529,6 +537,14 @@ a:hover {
 .portfolio-intro h2 {
     color: var(--accent-primary);
     margin-bottom: 1rem;
+    /* Typewriter animation setup */
+    overflow: hidden;
+    border-right: 3px solid var(--accent-primary);
+    white-space: nowrap;
+    margin: 0 auto;
+    animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
+    animation-fill-mode: forwards;
+    opacity: 0;
 }
 
 .portfolio-intro p {
@@ -703,6 +719,14 @@ a:hover {
 .contact-intro h2 {
     color: var(--accent-primary);
     margin-bottom: 1rem;
+    /* Typewriter animation setup */
+    overflow: hidden;
+    border-right: 3px solid var(--accent-primary);
+    white-space: nowrap;
+    margin: 0 auto;
+    animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
+    animation-fill-mode: forwards;
+    opacity: 0;
 }
 
 .contact-intro p {

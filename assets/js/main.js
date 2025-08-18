@@ -192,6 +192,9 @@ function initializeTypewriterAnimation() {
     const heroTitle = document.querySelector('.hero-title');
     const heroSubtitle = document.querySelector('.hero-subtitle');
     
+    // Get all intro elements
+    const introElements = document.querySelectorAll('[class*="-intro"] h2');
+    
     if (heroTitle && heroSubtitle) {
         // Store original text
         const titleText = heroTitle.textContent;
@@ -205,10 +208,28 @@ function initializeTypewriterAnimation() {
         typeText(heroTitle, titleText, 0, () => {
             // After title is done, start subtitle with 0.5s delay
             setTimeout(() => {
-                typeText(heroSubtitle, subtitleText, 0);
+                typeText(heroSubtitle, subtitleText, 0, () => {
+                    // After subtitle is done, animate intro elements
+                    animateIntroElements(introElements);
+                });
             }, 500);
         });
+    } else if (introElements.length > 0) {
+        // If no hero elements, just animate intro elements
+        animateIntroElements(introElements);
     }
+}
+
+function animateIntroElements(introElements) {
+    introElements.forEach((element, index) => {
+        const text = element.textContent;
+        element.textContent = '';
+        
+        // Stagger the animations with increasing delays
+        setTimeout(() => {
+            typeText(element, text, 0);
+        }, index * 800); // 800ms delay between each intro element
+    });
 }
 
 function typeText(element, text, index, callback) {
