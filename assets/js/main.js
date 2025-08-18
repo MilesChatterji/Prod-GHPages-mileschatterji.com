@@ -191,45 +191,31 @@ function initializeSearch() {
 function initializeTypewriterAnimation() {
     const heroTitle = document.querySelector('.hero-title');
     const heroSubtitle = document.querySelector('.hero-subtitle');
-    
-    // Get all intro elements
-    const introElements = document.querySelectorAll('[class*="-intro"] h2');
-    
+    const pageTitle = document.querySelector('.page-title');
+
     if (heroTitle && heroSubtitle) {
-        // Store original text
         const titleText = heroTitle.textContent;
         const subtitleText = heroSubtitle.textContent;
-        
-        // Clear text initially
         heroTitle.textContent = '';
         heroSubtitle.textContent = '';
-        
-        // Type title first
         typeText(heroTitle, titleText, 0, () => {
-            // After title is done, start subtitle with 0.5s delay
             setTimeout(() => {
                 typeText(heroSubtitle, subtitleText, 0, () => {
-                    // After subtitle is done, animate intro elements
-                    animateIntroElements(introElements);
+                    // After hero subtitle, animate page title if present
+                    if (pageTitle) animateSingle(pageTitle);
                 });
             }, 500);
         });
-    } else if (introElements.length > 0) {
-        // If no hero elements, just animate intro elements
-        animateIntroElements(introElements);
+    } else if (pageTitle) {
+        // If no hero elements, animate page title directly
+        animateSingle(pageTitle);
     }
 }
 
-function animateIntroElements(introElements) {
-    introElements.forEach((element, index) => {
-        const text = element.textContent;
-        element.textContent = '';
-        
-        // Stagger the animations with increasing delays
-        setTimeout(() => {
-            typeText(element, text, 0);
-        }, index * 800); // 800ms delay between each intro element
-    });
+function animateSingle(element) {
+    const text = element.textContent;
+    element.textContent = '';
+    typeText(element, text, 0);
 }
 
 function typeText(element, text, index, callback) {
