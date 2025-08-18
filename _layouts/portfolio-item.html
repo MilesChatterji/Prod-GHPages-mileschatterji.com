@@ -1,0 +1,54 @@
+---
+layout: default
+---
+
+<article class="portfolio-item">
+    <header class="portfolio-header">
+        <h1 class="portfolio-title">{{ page.title }}</h1>
+        {% if page.subtitle %}
+        <p class="portfolio-subtitle">{{ page.subtitle }}</p>
+        {% endif %}
+        {% if page.date %}
+        <time class="portfolio-date" datetime="{{ page.date | date_to_xmlschema }}">
+            {{ page.date | date: "%B %d, %Y" }}
+        </time>
+        {% endif %}
+    </header>
+    
+    {% if page.image %}
+    <div class="portfolio-hero">
+        <img src="{{ page.image | relative_url }}" alt="{{ page.title }}" class="portfolio-hero-image">
+    </div>
+    {% endif %}
+    
+    <div class="portfolio-content">
+        {{ content }}
+    </div>
+    
+    {% if page.gallery %}
+    <div class="portfolio-gallery">
+        <h2>Gallery</h2>
+        <div class="gallery-grid">
+            {% for image in page.gallery %}
+            <div class="gallery-item">
+                <img src="{{ image.url | relative_url }}" alt="{{ image.alt }}" class="gallery-image">
+                {% if image.caption %}
+                <p class="gallery-caption">{{ image.caption }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if page.tags %}
+    <footer class="portfolio-footer">
+        <div class="portfolio-tags">
+            <span class="tags-label">Tags:</span>
+            {% for tag in page.tags %}
+            <span class="tag">{{ tag }}</span>
+            {% endfor %}
+        </div>
+    </footer>
+    {% endif %}
+</article>

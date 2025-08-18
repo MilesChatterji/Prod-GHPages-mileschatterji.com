@@ -1,0 +1,76 @@
+title: Your Name - Personal Website & Photography Portfolio
+description: Personal website and photography portfolio showcasing creative work and professional experience
+author: Your Name
+email: your.email@example.com
+url: "https://mileschatterji.com"
+baseurl: ""
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: /:categories/:title/
+
+# Collections
+collections:
+  portfolio:
+    output: true
+    permalink: /portfolio/:title/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+  - scope:
+      path: ""
+      type: "portfolio"
+    values:
+      layout: "portfolio-item"
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+
+# Navigation structure
+navigation:
+  - title: Biography
+    url: /biography/
+    submenu:
+      - title: About Me
+        url: /biography/about/
+      - title: Experience
+        url: /biography/experience/
+      - title: Education
+        url: /biography/education/
+  - title: Portfolio
+    url: /portfolio/
+    submenu:
+      - title: Photography
+        url: /portfolio/photography/
+      - title: Projects
+        url: /portfolio/projects/
+      - title: Artwork
+        url: /portfolio/artwork/
+  - title: Contact
+    url: /contact/
+    submenu:
+      - title: Get in Touch
+        url: /contact/contact-form/
+      - title: Social Media
+        url: /contact/social/
+      - title: Location
+        url: /contact/location/
