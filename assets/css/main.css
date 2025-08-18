@@ -3,9 +3,7 @@
 /* Import NDOT 47 Font */
 @font-face {
     font-family: 'NDOT 47';
-    src: url('/assets/fonts/NDOT47.woff2') format('woff2'),
-         url('/assets/fonts/NDOT47.woff') format('woff'),
-         url('/assets/fonts/NDOT47.ttf') format('truetype');
+    src: url('/assets/fonts/NDOT47.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
