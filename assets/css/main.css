@@ -90,8 +90,7 @@ a:hover {
     flex: 1;
     padding: 2rem;
     margin-left: 20%; /* Account for sidebar width */
-   /* max-width: calc(100vw - 280px); */
-    max-width: 80%;
+    max-width: calc(100vw - 280px);
 }
 
 /* Page Layouts */
