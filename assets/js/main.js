@@ -1,23 +1,15 @@
 // Main JavaScript for Jekyll Site
 
+// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize site functionality
-    initializeSite();
+    // Initialize theme switcher
+    new ThemeSwitcher();
     
-    // Add smooth page transitions
-    initializePageTransitions();
-    
-    // Initialize image lazy loading
-    initializeLazyLoading();
-    
-    // Add scroll effects
-    initializeScrollEffects();
+    // Initialize sound manager
+    window.soundManager = new SoundManager();
     
     // Initialize typewriter animation
     initializeTypewriterAnimation();
-
-    // Initialize theme switcher
-    new ThemeSwitcher();
 });
 
 function initializeSite() {
@@ -190,7 +182,32 @@ function initializeSearch() {
     });
 }
 
-// Typewriter Animation
+// Typewriter Animation Function
+function typewriterEffect(element, text, speed = 100, callback = null) {
+    let i = 0;
+    element.textContent = '';
+    element.style.opacity = '1';
+    
+    function typeChar() {
+        if (i < text.length) {
+            element.textContent += text.charAt(i);
+            
+            // Play typewriter sound for each character
+            if (window.soundManager) {
+                window.soundManager.playTypewriterSound();
+            }
+            
+            i++;
+            setTimeout(typeChar, speed);
+        } else {
+            if (callback) callback();
+        }
+    }
+    
+    typeChar();
+}
+
+// Initialize Typewriter Animation
 function initializeTypewriterAnimation() {
     const heroTitle = document.querySelector('.hero-title');
     const heroSubtitle = document.querySelector('.hero-subtitle');
@@ -199,38 +216,24 @@ function initializeTypewriterAnimation() {
     if (heroTitle && heroSubtitle) {
         const titleText = heroTitle.textContent;
         const subtitleText = heroSubtitle.textContent;
-        heroTitle.textContent = '';
-        heroSubtitle.textContent = '';
-        typeText(heroTitle, titleText, 0, () => {
+        
+        // Start with hero title
+        typewriterEffect(heroTitle, titleText, 100, () => {
+            // After hero title completes, start subtitle
             setTimeout(() => {
-                typeText(heroSubtitle, subtitleText, 0, () => {
+                typewriterEffect(heroSubtitle, subtitleText, 100, () => {
                     // After hero subtitle, animate page title if present
-                    if (pageTitle) animateSingle(pageTitle);
+                    if (pageTitle) {
+                        const pageTitleText = pageTitle.textContent;
+                        typewriterEffect(pageTitle, pageTitleText, 100);
+                    }
                 });
             }, 500);
         });
     } else if (pageTitle) {
         // If no hero elements, animate page title directly
-        animateSingle(pageTitle);
-    }
-}
-
-function animateSingle(element) {
-    const text = element.textContent;
-    element.textContent = '';
-    typeText(element, text, 0);
-}
-
-function typeText(element, text, index, callback) {
-    if (index < text.length) {
-        element.textContent += text.charAt(index);
-        setTimeout(() => {
-            typeText(element, text, index + 1, callback);
-        }, 100); // Adjust speed here (lower = faster)
-    } else {
-        // Remove the cursor after typing is complete
-        element.style.borderRight = 'none';
-        if (callback) callback();
+        const pageTitleText = pageTitle.textContent;
+        typewriterEffect(pageTitle, pageTitleText, 100);
     }
 }
 
@@ -321,6 +324,109 @@ class ThemeSwitcher {
         this.themeSwitcher.style.background = computedStyle.getPropertyValue('--bg-secondary');
         this.themeSwitcher.style.borderColor = computedStyle.getPropertyValue('--border-color');
         this.themeSwitcher.style.boxShadow = `0 2px 8px ${computedStyle.getPropertyValue('--shadow-color')}`;
+    }
+}
+
+// Sound Manager for Typewriter Effects
+class SoundManager {
+    constructor() {
+        this.soundEnabled = localStorage.getItem('sound') !== 'off';
+        this.audioContext = null;
+        this.soundToggle = document.querySelector('.sound-toggle');
+        this.soundOptions = document.querySelectorAll('.sound-option');
+        
+        this.init();
+    }
+    
+    init() {
+        // Set initial sound state
+        this.updateSoundState();
+        
+        // Add event listeners
+        this.soundOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                const soundState = e.currentTarget.dataset.sound;
+                this.setSoundState(soundState === 'on');
+            });
+        });
+        
+        // Add keyboard navigation
+        this.soundToggle.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const activeOption = this.soundToggle.querySelector('.sound-option:focus');
+                if (activeOption) {
+                    const soundState = activeOption.dataset.sound;
+                    this.setSoundState(soundState === 'on');
+                }
+            }
+        });
+        
+        // Initialize audio context on first user interaction
+        document.addEventListener('click', () => {
+            if (!this.audioContext) {
+                this.initAudioContext();
+            }
+        }, { once: true });
+    }
+    
+    initAudioContext() {
+        try {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            console.log('Web Audio API not supported');
+        }
+    }
+    
+    setSoundState(enabled) {
+        this.soundEnabled = enabled;
+        localStorage.setItem('sound', enabled ? 'on' : 'off');
+        this.updateSoundState();
+        
+        // Add visual feedback
+        this.soundToggle.classList.add('sound-changing');
+        setTimeout(() => {
+            this.soundToggle.classList.remove('sound-changing');
+        }, 300);
+    }
+    
+    updateSoundState() {
+        this.soundOptions.forEach(option => {
+            option.classList.remove('active');
+            if ((option.dataset.sound === 'on' && this.soundEnabled) ||
+                (option.dataset.sound === 'off' && !this.soundEnabled)) {
+                option.classList.add('active');
+            }
+        });
+    }
+    
+    playTypewriterSound() {
+        if (!this.soundEnabled || !this.audioContext) return;
+        
+        try {
+            const oscillator = this.audioContext.createOscillator();
+            const gainNode = this.audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(this.audioContext.destination);
+            
+            // Add slight randomization for more realistic typewriter sound
+            const baseFreq = 800 + (Math.random() * 200 - 100); // 700-900 Hz
+            const duration = 0.03 + (Math.random() * 0.02); // 0.03-0.05 seconds
+            
+            // Typewriter sound characteristics
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(baseFreq, this.audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(baseFreq * 0.8, this.audioContext.currentTime + duration);
+            
+            gainNode.gain.setValueAtTime(0.08, this.audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
+            
+            oscillator.start(this.audioContext.currentTime);
+            oscillator.stop(this.audioContext.currentTime + duration);
+        } catch (e) {
+            console.log('Error playing typewriter sound:', e);
+        }
     }
 }
 

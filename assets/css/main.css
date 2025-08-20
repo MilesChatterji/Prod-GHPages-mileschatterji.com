@@ -78,6 +78,24 @@
     transition: all var(--transition-speed) ease;
 }
 
+/* Sound Toggle */
+.sound-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 8rem;
+    z-index: 1002;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 25px;
+    padding: 0.25rem;
+    box-shadow: 0 2px 8px var(--shadow-color);
+    backdrop-filter: blur(10px);
+    transition: all var(--transition-speed) ease;
+}
+
 .theme-option {
     display: flex;
     align-items: center;
@@ -126,6 +144,54 @@
     z-index: 1;
 }
 
+.sound-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    font-size: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.sound-option:hover {
+    color: var(--accent-primary);
+    transform: scale(1.1);
+}
+
+.sound-option.active {
+    background: var(--accent-primary);
+    color: var(--bg-secondary);
+    box-shadow: 0 2px 8px rgba(255, 140, 0, 0.3);
+}
+
+.sound-option.active::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    background: var(--bg-secondary);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.9;
+}
+
+.sound-option svg {
+    width: 16px;
+    height: 16px;
+    position: relative;
+    z-index: 1;
+}
+
 /* Responsive Design for Theme Switcher */
 @media (max-width: 768px) {
     .theme-switcher {
@@ -148,26 +214,46 @@
     .theme-switcher {
         z-index: 1001;
     }
+    
+    .sound-toggle {
+        top: 0.5rem;
+        right: 4rem;
+        padding: 0.2rem;
+    }
+    
+    .sound-option {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .sound-option svg {
+        width: 14px;
+        height: 14px;
+    }
 }
 
 /* High contrast mode support for theme switcher */
 @media (prefers-contrast: high) {
-    .theme-switcher {
+    .theme-switcher,
+    .sound-toggle {
         border-width: 2px;
     }
     
-    .theme-option.active {
+    .theme-option.active,
+    .sound-option.active {
         border: 2px solid var(--text-primary);
     }
 }
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-    .theme-option:hover {
+    .theme-option:hover,
+    .sound-option:hover {
         transform: none;
     }
     
-    .theme-option {
+    .theme-option,
+    .sound-option {
         transition: color var(--transition-speed) ease;
     }
 }
@@ -200,13 +286,32 @@ body[data-theme] {
     box-shadow: 0 4px 16px var(--shadow-color);
 }
 
+/* Sound toggle hover effects */
+.sound-toggle:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px var(--shadow-color);
+}
+
+/* Sound state change animation */
+.sound-toggle.sound-changing {
+    animation: soundPulse 0.3s ease-in-out;
+}
+
+@keyframes soundPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
 /* Focus states for accessibility */
-.theme-option:focus {
+.theme-option:focus,
+.sound-option:focus {
     outline: 2px solid var(--accent-primary);
     outline-offset: 2px;
 }
 
-.theme-option:focus:not(:focus-visible) {
+.theme-option:focus:not(:focus-visible),
+.sound-option:focus:not(:focus-visible) {
     outline: none;
 }
 
