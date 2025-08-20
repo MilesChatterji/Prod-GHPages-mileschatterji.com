@@ -376,10 +376,56 @@ class SoundManager {
     
     initFallbackAudio() {
         try {
-            // Create a simple beep sound using HTML5 Audio
+            // Create a simple beep sound using HTML5 Audio with data URI
             this.fallbackAudio = new Audio();
-            this.fallbackAudio.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT';
-            this.fallbackAudio.load();
+            
+            // Create a simple beep sound using Web Audio API if available, fallback to data URI
+            if (window.AudioContext || window.webkitAudioContext) {
+                try {
+                    const tempContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = tempContext.createOscillator();
+                    const gainNode = tempContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(tempContext.destination);
+                    
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(800, tempContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.1, tempContext.currentTime);
+                    
+                    oscillator.start(tempContext.currentTime);
+                    oscillator.stop(tempContext.currentTime + 0.1);
+                    
+                    // Create a MediaStreamDestination to capture the audio
+                    const dest = tempContext.createMediaStreamDestination();
+                    oscillator.connect(dest);
+                    
+                    // Convert to blob and create audio element
+                    const mediaRecorder = new MediaRecorder(dest.stream);
+                    const chunks = [];
+                    
+                    mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(chunks, { type: 'audio/wav' });
+                        this.fallbackAudio.src = URL.createObjectURL(blob);
+                        this.fallbackAudio.load();
+                    };
+                    
+                    mediaRecorder.start();
+                    setTimeout(() => mediaRecorder.stop(), 100);
+                    
+                } catch (e) {
+                    console.log('Web Audio fallback failed, using data URI');
+                    // Fallback to data URI
+                    this.fallbackAudio.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT';
+                    this.fallbackAudio.load();
+                }
+            } else {
+                // Pure HTML5 fallback
+                this.fallbackAudio.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT';
+                this.fallbackAudio.load();
+            }
+            
             console.log('Fallback audio initialized');
         } catch (e) {
             console.log('Fallback audio not supported:', e);

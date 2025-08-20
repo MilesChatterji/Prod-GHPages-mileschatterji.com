@@ -78,24 +78,6 @@
     transition: all var(--transition-speed) ease;
 }
 
-/* Sound Toggle */
-.sound-toggle {
-    position: fixed;
-    top: 1rem;
-    right: 8rem;
-    z-index: 1001;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 25px;
-    padding: 0.25rem;
-    box-shadow: 0 2px 8px var(--shadow-color);
-    backdrop-filter: blur(10px);
-    transition: all var(--transition-speed) ease;
-}
-
 .theme-option {
     display: flex;
     align-items: center;
@@ -142,6 +124,24 @@
     height: 16px;
     position: relative;
     z-index: 1;
+}
+
+/* Sound Toggle */
+.sound-toggle {
+    position: fixed;
+    top: 5rem;
+    right: 1rem;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 25px;
+    padding: 0.25rem;
+    box-shadow: 0 2px 8px var(--shadow-color);
+    backdrop-filter: blur(10px);
+    transition: all var(--transition-speed) ease;
 }
 
 .sound-option {
@@ -214,8 +214,8 @@
 /* Debug Button (temporary) */
 .debug-control {
     position: fixed;
-    top: 1rem;
-    right: 12rem;
+    top: 9rem;
+    right: 1rem;
     z-index: 1001;
 }
 
@@ -276,8 +276,8 @@
     }
     
     .sound-toggle {
-        top: 0.5rem;
-        right: 4rem;
+        top: 4rem;
+        right: 0.5rem;
         padding: 0.2rem;
         z-index: 1001;
     }
@@ -290,6 +290,17 @@
     .sound-option svg {
         width: 14px;
         height: 14px;
+    }
+    
+    .debug-control {
+        top: 7.5rem;
+        right: 0.5rem;
+    }
+    
+    .debug-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
     }
     
     /* Ensure biography image is visible on mobile */
@@ -478,9 +489,8 @@ a:hover {
 /* Add typewriter animation to page-title */
 .page-title {
     overflow: hidden;
-    border-right: 3px solid var(--accent-primary);
     white-space: nowrap;
-    animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
+    animation: typing 2s steps(40, end);
     animation-fill-mode: forwards;
     opacity: 0;
 }
@@ -647,10 +657,9 @@ a:hover {
     text-shadow: 0 2px 4px var(--shadow-color);
     /* Typewriter animation setup */
     overflow: hidden;
-    border-right: 3px solid var(--accent-primary);
     white-space: nowrap;
     margin: 0 auto;
-    animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
+    animation: typing 2s steps(40, end);
     animation-fill-mode: forwards;
     opacity: 0;
 }
@@ -663,10 +672,9 @@ a:hover {
     font-weight: normal;
     /* Typewriter animation setup */
     overflow: hidden;
-    border-right: 3px solid var(--accent-primary);
     white-space: nowrap;
     margin: 0 auto;
-    animation: typing 2s steps(40, end) 0.5s, blink-caret 0.75s step-end infinite 0.5s;
+    animation: typing 2s steps(40, end) 0.5s;
     animation-fill-mode: forwards;
     opacity: 0;
 }
@@ -818,18 +826,22 @@ a:hover {
     margin: 0 auto;
 }
 
+/* Biography hero section positioning */
 .biography-hero {
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 2rem;
     margin-bottom: 3rem;
     align-items: center;
+    position: relative;
+    z-index: 10;
 }
 
 /* Ensure biography image is visible and not covered by controls */
 .biography-image {
     position: relative;
-    z-index: 1;
+    z-index: 10;
+    margin-top: 2rem;
 }
 
 .biography-image img {
@@ -839,6 +851,8 @@ a:hover {
     display: block;
     max-width: 100%;
     height: auto;
+    position: relative;
+    z-index: 10;
 }
 
 .biography-intro h2 {
