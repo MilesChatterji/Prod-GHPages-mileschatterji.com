@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize typewriter animation
     initializeTypewriterAnimation();
+
+    // Initialize theme switcher
+    new ThemeSwitcher();
 });
 
 function initializeSite() {
@@ -255,6 +258,70 @@ function throttle(func, limit) {
             setTimeout(() => inThrottle = false, limit);
         }
     };
+}
+
+// Theme Switcher Functionality
+class ThemeSwitcher {
+    constructor() {
+        this.themeSwitcher = document.querySelector('.theme-switcher');
+        this.themeOptions = document.querySelectorAll('.theme-option');
+        this.currentTheme = localStorage.getItem('theme') || 'light';
+        
+        this.init();
+    }
+    
+    init() {
+        // Set initial theme
+        this.setTheme(this.currentTheme);
+        
+        // Add event listeners
+        this.themeOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                const theme = e.currentTarget.dataset.theme;
+                this.setTheme(theme);
+            });
+        });
+        
+        // Add keyboard navigation
+        this.themeSwitcher.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const activeOption = this.themeSwitcher.querySelector('.theme-option:focus');
+                if (activeOption) {
+                    const theme = activeOption.dataset.theme;
+                    this.setTheme(theme);
+                }
+            }
+        });
+    }
+    
+    setTheme(theme) {
+        // Update data attribute on body
+        document.body.setAttribute('data-theme', theme);
+        
+        // Update active state on buttons
+        this.themeOptions.forEach(option => {
+            option.classList.remove('active');
+            if (option.dataset.theme === theme) {
+                option.classList.add('active');
+            }
+        });
+        
+        // Save to localStorage
+        localStorage.setItem('theme', theme);
+        this.currentTheme = theme;
+        
+        // Update theme switcher background to match current theme
+        this.updateThemeSwitcherStyle();
+    }
+    
+    updateThemeSwitcherStyle() {
+        // Update theme switcher background and border to match current theme
+        const computedStyle = getComputedStyle(document.documentElement);
+        this.themeSwitcher.style.background = computedStyle.getPropertyValue('--bg-secondary');
+        this.themeSwitcher.style.borderColor = computedStyle.getPropertyValue('--border-color');
+        this.themeSwitcher.style.boxShadow = `0 2px 8px ${computedStyle.getPropertyValue('--shadow-color')}`;
+    }
 }
 
 // Add CSS for additional functionality
