@@ -83,7 +83,7 @@
     position: fixed;
     top: 1rem;
     right: 8rem;
-    z-index: 1002;
+    z-index: 1001;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -185,11 +185,71 @@
     opacity: 0.9;
 }
 
+/* Make muted state more visually distinct */
+.sound-option[data-sound="off"] {
+    opacity: 0.7;
+}
+
+.sound-option[data-sound="off"]:hover {
+    opacity: 1;
+}
+
+.sound-option[data-sound="off"].active {
+    opacity: 1;
+    background: var(--text-muted);
+    color: var(--bg-secondary);
+}
+
+.sound-option[data-sound="off"].active::before {
+    background: var(--bg-secondary);
+}
+
 .sound-option svg {
     width: 16px;
     height: 16px;
     position: relative;
     z-index: 1;
+}
+
+/* Debug Button (temporary) */
+.debug-control {
+    position: fixed;
+    top: 1rem;
+    right: 12rem;
+    z-index: 1001;
+}
+
+.debug-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all var(--transition-speed) ease;
+    box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.debug-btn:hover {
+    color: var(--accent-primary);
+    transform: scale(1.1);
+    box-shadow: 0 4px 16px var(--shadow-color);
+}
+
+/* Responsive design for debug button */
+@media (max-width: 768px) {
+    .debug-control {
+        top: 0.5rem;
+        right: 6.5rem;
+    }
+    
+    .debug-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
+    }
 }
 
 /* Responsive Design for Theme Switcher */
@@ -219,6 +279,7 @@
         top: 0.5rem;
         right: 4rem;
         padding: 0.2rem;
+        z-index: 1001;
     }
     
     .sound-option {
@@ -229,6 +290,11 @@
     .sound-option svg {
         width: 14px;
         height: 14px;
+    }
+    
+    /* Ensure biography image is visible on mobile */
+    .biography-image {
+        margin-top: 1rem;
     }
 }
 
@@ -760,10 +826,19 @@ a:hover {
     align-items: center;
 }
 
+/* Ensure biography image is visible and not covered by controls */
+.biography-image {
+    position: relative;
+    z-index: 1;
+}
+
 .biography-image img {
     width: 100%;
     border-radius: 12px;
     box-shadow: 0 4px 12px var(--shadow-color);
+    display: block;
+    max-width: 100%;
+    height: auto;
 }
 
 .biography-intro h2 {

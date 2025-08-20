@@ -332,6 +332,7 @@ class SoundManager {
     constructor() {
         this.soundEnabled = localStorage.getItem('sound') !== 'off';
         this.audioContext = null;
+        this.fallbackAudio = null;
         this.soundToggle = document.querySelector('.sound-toggle');
         this.soundOptions = document.querySelectorAll('.sound-option');
         
@@ -368,13 +369,42 @@ class SoundManager {
                 this.initAudioContext();
             }
         }, { once: true });
+        
+        // Initialize fallback audio
+        this.initFallbackAudio();
+    }
+    
+    initFallbackAudio() {
+        try {
+            // Create a simple beep sound using HTML5 Audio
+            this.fallbackAudio = new Audio();
+            this.fallbackAudio.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT';
+            this.fallbackAudio.load();
+            console.log('Fallback audio initialized');
+        } catch (e) {
+            console.log('Fallback audio not supported:', e);
+        }
     }
     
     initAudioContext() {
         try {
+            // Try to resume existing audio context first
+            if (this.audioContext && this.audioContext.state === 'suspended') {
+                this.audioContext.resume();
+                return;
+            }
+            
+            // Create new audio context with better compatibility
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Resume the context (required by some browsers)
+            if (this.audioContext.state === 'suspended') {
+                this.audioContext.resume();
+            }
+            
+            console.log('Audio context initialized successfully');
         } catch (e) {
-            console.log('Web Audio API not supported');
+            console.log('Web Audio API not supported:', e);
         }
     }
     
@@ -388,6 +418,11 @@ class SoundManager {
         setTimeout(() => {
             this.soundToggle.classList.remove('sound-changing');
         }, 300);
+        
+        // Test sound when enabling
+        if (enabled) {
+            setTimeout(() => this.playTypewriterSound(), 100);
+        }
     }
     
     updateSoundState() {
@@ -401,8 +436,20 @@ class SoundManager {
     }
     
     playTypewriterSound() {
-        if (!this.soundEnabled || !this.audioContext) return;
+        if (!this.soundEnabled) return;
         
+        // Try Web Audio API first
+        if (this.audioContext && this.audioContext.state === 'running') {
+            this.playWebAudioSound();
+        } else if (this.fallbackAudio) {
+            // Fallback to HTML5 Audio
+            this.playFallbackSound();
+        } else {
+            console.log('No audio system available');
+        }
+    }
+    
+    playWebAudioSound() {
         try {
             const oscillator = this.audioContext.createOscillator();
             const gainNode = this.audioContext.createGain();
@@ -424,8 +471,40 @@ class SoundManager {
             
             oscillator.start(this.audioContext.currentTime);
             oscillator.stop(this.audioContext.currentTime + duration);
+            
+            console.log('Web Audio typewriter sound played successfully');
         } catch (e) {
-            console.log('Error playing typewriter sound:', e);
+            console.log('Error playing Web Audio sound:', e);
+            // Fallback to HTML5 Audio
+            this.playFallbackSound();
+        }
+    }
+    
+    playFallbackSound() {
+        try {
+            if (this.fallbackAudio) {
+                this.fallbackAudio.currentTime = 0;
+                this.fallbackAudio.play();
+                console.log('Fallback typewriter sound played successfully');
+            }
+        } catch (e) {
+            console.log('Error playing fallback sound:', e);
+        }
+    }
+    
+    // Debug function to check audio system status
+    debugAudioSystem() {
+        console.log('=== Audio System Debug ===');
+        console.log('Sound enabled:', this.soundEnabled);
+        console.log('Audio context state:', this.audioContext ? this.audioContext.state : 'Not initialized');
+        console.log('Fallback audio available:', !!this.fallbackAudio);
+        console.log('Browser supports Web Audio API:', !!window.AudioContext || !!window.webkitAudioContext);
+        console.log('Browser supports HTML5 Audio:', !!window.Audio);
+        
+        // Test both audio systems
+        if (this.soundEnabled) {
+            console.log('Testing audio systems...');
+            setTimeout(() => this.playTypewriterSound(), 100);
         }
     }
 }
