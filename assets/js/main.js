@@ -419,7 +419,7 @@ class SoundManager {
             oscillator.frequency.setValueAtTime(baseFreq, this.audioContext.currentTime);
             oscillator.frequency.exponentialRampToValueAtTime(baseFreq * 0.8, this.audioContext.currentTime + duration);
             
-            gainNode.gain.setValueAtTime(0.08, this.audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.5, this.audioContext.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
             
             oscillator.start(this.audioContext.currentTime);
