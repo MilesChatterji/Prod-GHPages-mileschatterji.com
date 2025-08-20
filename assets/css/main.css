@@ -1,4 +1,4 @@
-/* Main CSS - Color Scheme: Dark Gray Background, White Text, Amber Hover */
+/* Main CSS - Color Scheme: Soft White Background, Black Text, Amber Hover */
 
 /* Import NDOT 47 Font */
 @font-face {
@@ -10,17 +10,17 @@
 }
 
 :root {
-    --bg-primary: #2a2a2a;
-    --bg-secondary: #3a3a3a;
-    --bg-tertiary: #4a4a4a;
-    --text-primary: #ffffff;
-    --text-secondary: #e0e0e0;
-    --text-muted: #b0b0b0;
+    --bg-primary: #f8f9fa;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f1f3f4;
+    --text-primary: #000000;
+    --text-secondary: #2c3e50;
+    --text-muted: #6c757d;
     --accent-primary: #ff8c00;
     --accent-secondary: #ffa500;
     --accent-hover: #ffb84d;
-    --border-color: #555555;
-    --shadow-color: rgba(0, 0, 0, 0.3);
+    --border-color: #dee2e6;
+    --shadow-color: rgba(0, 0, 0, 0.1);
     --transition-speed: 0.3s;
     --font-heading: 'NDOT 47', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
@@ -33,7 +33,7 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: var(--bg-tertiary);
+    background-color: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
     font-size: 16px;
@@ -67,7 +67,7 @@ h6 { font-size: 1.1rem; }
 
 p {
     margin-bottom: 1rem;
-    color: var(--text-secondary);
+    color: var(--text-primary);
 }
 
 a {
@@ -122,7 +122,7 @@ a:hover {
 
 .page-subtitle, .post-subtitle, .portfolio-subtitle {
     font-size: 1.2rem;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     margin-bottom: 1rem;
 }
 
@@ -181,7 +181,7 @@ a:hover {
 .gallery-caption {
     padding: 1rem;
     font-size: 0.9rem;
-    color: var(--text-secondary);
+    color: var(--text-primary);
 }
 
 /* Tags */
@@ -205,11 +205,12 @@ a:hover {
     font-size: 0.8rem;
     margin: 0.25rem 0.5rem 0.25rem 0;
     transition: background-color var(--transition-speed) ease;
+    border: 1px solid var(--border-color);
 }
 
 .tag:hover {
     background: var(--accent-primary);
-    color: var(--bg-primary);
+    color: var(--bg-secondary);
 }
 
 /* Buttons */
@@ -253,6 +254,7 @@ a:hover {
     margin-bottom: 3rem;
     position: relative;
     overflow: hidden;
+    border: 1px solid var(--border-color);
 }
 
 .hero-section::before {
@@ -291,7 +293,7 @@ a:hover {
 .hero-subtitle {
     font-family: var(--font-heading);
     font-size: 1.3rem;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     margin-bottom: 2rem;
     font-weight: normal;
     /* Typewriter animation setup */
@@ -391,7 +393,7 @@ a:hover {
 
 .featured-content p {
     margin-bottom: 1rem;
-    color: var(--text-secondary);
+    color: var(--text-primary);
 }
 
 /* About Preview */
@@ -413,6 +415,7 @@ a:hover {
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+    color: var(--text-primary);
 }
 
 /* Contact Preview */
@@ -434,6 +437,7 @@ a:hover {
     max-width: 500px;
     margin-left: auto;
     margin-right: auto;
+    color: var(--text-primary);
 }
 
 .contact-buttons {
@@ -470,7 +474,7 @@ a:hover {
 
 .lead {
     font-size: 1.2rem;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     margin-bottom: 1rem;
 }
 
@@ -502,6 +506,7 @@ a:hover {
 
 .section-card p {
     margin-bottom: 1rem;
+    color: var(--text-primary);
 }
 
 .highlights-list {
@@ -545,6 +550,7 @@ a:hover {
     font-size: 1.1rem;
     max-width: 600px;
     margin: 0 auto;
+    color: var(--text-primary);
 }
 
 .portfolio-search {
@@ -609,6 +615,7 @@ a:hover {
 
 .category-content p {
     margin-bottom: 1rem;
+    color: var(--text-primary);
 }
 
 .portfolio-featured {
@@ -668,7 +675,7 @@ a:hover {
 
 .featured-overlay p {
     margin-bottom: 1rem;
-    color: var(--text-secondary);
+    color: var(--text-primary);
 }
 
 .portfolio-cta {
@@ -690,6 +697,7 @@ a:hover {
     max-width: 500px;
     margin-left: auto;
     margin-right: auto;
+    color: var(--text-primary);
 }
 
 .cta-buttons {
@@ -719,6 +727,7 @@ a:hover {
     font-size: 1.1rem;
     max-width: 600px;
     margin: 0 auto;
+    color: var(--text-primary);
 }
 
 .contact-methods {
@@ -755,6 +764,7 @@ a:hover {
 
 .contact-method p {
     margin-bottom: 1.5rem;
+    color: var(--text-primary);
 }
 
 .contact-details {
@@ -822,7 +832,7 @@ a:hover {
 
 .service-item li {
     padding: 0.25rem 0;
-    color: var(--text-secondary);
+    color: var(--text-primary);
 }
 
 .service-item li::before {
@@ -851,6 +861,7 @@ a:hover {
     max-width: 500px;
     margin-left: auto;
     margin-right: auto;
+    color: var(--text-primary);
 }
 
 /* Responsive Design */

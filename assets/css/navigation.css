@@ -6,7 +6,7 @@
     top: 0;
     width: 20%;
     height: 100vh;
-    background: var(--bg-tertiary);
+    background: var(--bg-secondary);
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
@@ -18,7 +18,7 @@
 .sidebar-header {
     padding: 2rem 1.5rem 1.5rem;
     border-bottom: 1px solid var(--border-color);
-    background: var(--bg-tertiary);
+    background: var(--bg-secondary);
 }
 
 .site-title {
@@ -73,7 +73,7 @@
     list-style: none;
     margin: 0;
     padding: 0;
-    background: var(--bg-primary);
+    background: var(--bg-tertiary);
     border-left: 1px solid var(--border-color);
     margin-left: 1.5rem;
 }
@@ -81,7 +81,7 @@
 .submenu-link {
     display: block;
     padding: 0.5rem 1.5rem;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     text-decoration: none;
     font-size: 0.9rem;
     transition: all var(--transition-speed) ease;
@@ -104,7 +104,7 @@
 .sidebar-footer {
     padding: 1.5rem;
     border-top: 1px solid var(--border-color);
-    background: var(--bg-tertiary);
+    background: var(--bg-secondary);
 }
 
 .social-links {
@@ -119,8 +119,8 @@
     justify-content: center;
     width: 40px;
     height: 40px;
-    background: var(--bg-primary);
-    color: var(--text-secondary);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
     border-radius: 50%;
     transition: all var(--transition-speed) ease;
     border: 1px solid var(--border-color);
@@ -201,7 +201,7 @@
 }
 
 .sidebar::-webkit-scrollbar-track {
-    background: var(--bg-primary);
+    background: var(--bg-tertiary);
 }
 
 .sidebar::-webkit-scrollbar-thumb {
