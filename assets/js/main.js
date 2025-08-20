@@ -1,12 +1,23 @@
 // Main JavaScript for Jekyll Site
 
-// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize theme switcher
-    new ThemeSwitcher();
+    // Initialize site functionality
+    initializeSite();
+    
+    // Add smooth page transitions
+    initializePageTransitions();
+    
+    // Initialize image lazy loading
+    initializeLazyLoading();
+    
+    // Add scroll effects
+    initializeScrollEffects();
     
     // Initialize typewriter animation
     initializeTypewriterAnimation();
+
+    // Initialize theme switcher
+    new ThemeSwitcher();
 });
 
 function initializeSite() {
@@ -179,26 +190,7 @@ function initializeSearch() {
     });
 }
 
-// Typewriter Animation Function
-function typewriterEffect(element, text, speed = 100, callback = null) {
-    let i = 0;
-    element.textContent = '';
-    element.style.opacity = '1';
-    
-    function typeChar() {
-        if (i < text.length) {
-            element.textContent += text.charAt(i);
-            i++;
-            setTimeout(typeChar, speed);
-        } else {
-            if (callback) callback();
-        }
-    }
-    
-    typeChar();
-}
-
-// Initialize Typewriter Animation
+// Typewriter Animation
 function initializeTypewriterAnimation() {
     const heroTitle = document.querySelector('.hero-title');
     const heroSubtitle = document.querySelector('.hero-subtitle');
@@ -207,24 +199,38 @@ function initializeTypewriterAnimation() {
     if (heroTitle && heroSubtitle) {
         const titleText = heroTitle.textContent;
         const subtitleText = heroSubtitle.textContent;
-        
-        // Start with hero title
-        typewriterEffect(heroTitle, titleText, 100, () => {
-            // After hero title completes, start subtitle
+        heroTitle.textContent = '';
+        heroSubtitle.textContent = '';
+        typeText(heroTitle, titleText, 0, () => {
             setTimeout(() => {
-                typewriterEffect(heroSubtitle, subtitleText, 100, () => {
+                typeText(heroSubtitle, subtitleText, 0, () => {
                     // After hero subtitle, animate page title if present
-                    if (pageTitle) {
-                        const pageTitleText = pageTitle.textContent;
-                        typewriterEffect(pageTitle, pageTitleText, 100);
-                    }
+                    if (pageTitle) animateSingle(pageTitle);
                 });
             }, 500);
         });
     } else if (pageTitle) {
         // If no hero elements, animate page title directly
-        const pageTitleText = pageTitle.textContent;
-        typewriterEffect(pageTitle, pageTitleText, 100);
+        animateSingle(pageTitle);
+    }
+}
+
+function animateSingle(element) {
+    const text = element.textContent;
+    element.textContent = '';
+    typeText(element, text, 0);
+}
+
+function typeText(element, text, index, callback) {
+    if (index < text.length) {
+        element.textContent += text.charAt(index);
+        setTimeout(() => {
+            typeText(element, text, index + 1, callback);
+        }, 100); // Adjust speed here (lower = faster)
+    } else {
+        // Remove the cursor after typing is complete
+        element.style.borderRight = 'none';
+        if (callback) callback();
     }
 }
 

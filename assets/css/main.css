@@ -126,22 +126,539 @@
     z-index: 1;
 }
 
-/* Ensure biography image is visible and not covered by controls */
-.biography-image {
-    position: relative;
-    z-index: 10;
+/* Responsive Design for Theme Switcher */
+@media (max-width: 768px) {
+    .theme-switcher {
+        top: 0.5rem;
+        right: 0.5rem;
+        padding: 0.2rem;
+    }
+    
+    .theme-option {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .theme-option svg {
+        width: 14px;
+        height: 14px;
+    }
+    
+    /* Ensure theme switcher doesn't interfere with mobile nav toggle */
+    .theme-switcher {
+        z-index: 1001;
+    }
+}
+
+/* High contrast mode support for theme switcher */
+@media (prefers-contrast: high) {
+    .theme-switcher {
+        border-width: 2px;
+    }
+    
+    .theme-option.active {
+        border: 2px solid var(--text-primary);
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .theme-option:hover {
+        transform: none;
+    }
+    
+    .theme-option {
+        transition: color var(--transition-speed) ease;
+    }
+}
+
+/* Smooth transitions for theme changes */
+* {
+    transition: background-color var(--transition-speed) ease, 
+                color var(--transition-speed) ease, 
+                border-color var(--transition-speed) ease, 
+                box-shadow var(--transition-speed) ease;
+}
+
+/* Theme transition animation */
+body[data-theme] {
+    animation: themeFadeIn 0.3s ease-in-out;
+}
+
+@keyframes themeFadeIn {
+    from {
+        opacity: 0.95;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Theme switcher hover effects */
+.theme-switcher:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px var(--shadow-color);
+}
+
+/* Focus states for accessibility */
+.theme-option:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+}
+
+.theme-option:focus:not(:focus-visible) {
+    outline: none;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-size: 16px;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-size: 16px;
+    overflow-x: hidden;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+/* NDOT 47 Font for Headings */
+h1, h2 {
+    font-family: var(--font-heading);
+    font-weight: normal; /* NDOT 47 typically works better with normal weight */
+}
+
+h3, h4, h5, h6 {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1.1rem; }
+
+p {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+a {
+    color: var(--accent-primary);
+    text-decoration: none;
+    transition: color var(--transition-speed) ease;
+}
+
+a:hover {
+    color: var(--accent-hover);
+}
+
+/* Layout */
+.site-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    margin-left: 20%; /* Account for sidebar width */
+    max-width: calc(100vw - 280px);
+}
+
+/* Page Layouts */
+.page, .post, .portfolio-item {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.page-header, .post-header, .portfolio-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.page-title, .post-title, .portfolio-title {
+    color: var(--accent-primary);
+    margin-bottom: 0.5rem;
+}
+
+/* Add typewriter animation to page-title */
+.page-title {
+    overflow: hidden;
+    border-right: 3px solid var(--accent-primary);
+    white-space: nowrap;
+    animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
+    animation-fill-mode: forwards;
+    opacity: 0;
+}
+
+.page-subtitle, .post-subtitle, .portfolio-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.post-meta, .portfolio-date {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.post-author {
+    margin-right: 1rem;
+}
+
+/* Content */
+.page-content, .post-content, .portfolio-content {
+    margin-bottom: 2rem;
+}
+
+/* Images */
+.post-hero-image, .portfolio-hero-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+/* Gallery */
+.portfolio-gallery {
+    margin-top: 3rem;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.gallery-item {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform var(--transition-speed) ease;
+}
+
+.gallery-item:hover {
+    transform: translateY(-4px);
+}
+
+.gallery-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.gallery-caption {
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+/* Tags */
+.portfolio-tags, .post-tags {
     margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.tags-label {
+    color: var(--text-muted);
+    margin-right: 0.5rem;
+}
+
+.tag {
+    display: inline-block;
+    background: var(--bg-secondary);
+    color: var(--accent-primary);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin: 0.25rem 0.5rem 0.25rem 0;
+    transition: background-color var(--transition-speed) ease;
+    border: 1px solid var(--border-color);
+}
+
+.tag:hover {
+    background: var(--accent-primary);
+    color: var(--bg-secondary);
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+}
+
+.btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-primary);
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+    padding: 4rem 2rem;
+    text-align: center;
+    border-radius: 12px;
+    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-title {
+    font-family: var(--font-heading);
+    font-size: 3.5rem;
+    font-weight: normal;
+    margin-bottom: 1rem;
+    color: var(--accent-primary);
+    text-shadow: 0 2px 4px var(--shadow-color);
+    /* Typewriter animation setup */
+    overflow: hidden;
+    border-right: 3px solid var(--accent-primary);
+    white-space: nowrap;
+    margin: 0 auto;
+    animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
+    animation-fill-mode: forwards;
+    opacity: 0;
+}
+
+.hero-subtitle {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    color: var(--text-primary);
+    margin-bottom: 2rem;
+    font-weight: normal;
+    /* Typewriter animation setup */
+    overflow: hidden;
+    border-right: 3px solid var(--accent-primary);
+    white-space: nowrap;
+    margin: 0 auto;
+    animation: typing 2s steps(40, end) 0.5s, blink-caret 0.75s step-end infinite 0.5s;
+    animation-fill-mode: forwards;
+    opacity: 0;
+}
+
+/* Typewriter animation keyframes */
+@keyframes typing {
+    from {
+        width: 0;
+        opacity: 1;
+    }
+    to {
+        width: 100%;
+        opacity: 1;
+    }
+}
+
+@keyframes blink-caret {
+    from, to {
+        border-color: transparent;
+    }
+    50% {
+        border-color: var(--accent-primary);
+    }
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Featured Sections */
+.featured-section, .about-preview, .contact-preview {
+    margin-bottom: 3rem;
+}
+
+.featured-section h2, .about-preview h2, .contact-preview h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--accent-primary);
+}
+
+.featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.featured-item {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all var(--transition-speed) ease;
+    border: 1px solid var(--border-color);
+}
+
+.featured-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px var(--shadow-color);
+    border-color: var(--accent-primary);
+}
+
+.featured-image {
+    height: 200px;
+    overflow: hidden;
+}
+
+.featured-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-speed) ease;
+}
+
+.featured-item:hover .featured-image img {
+    transform: scale(1.05);
+}
+
+.featured-content {
+    padding: 1.5rem;
+}
+
+.featured-content h3 {
+    color: var(--accent-primary);
+    margin-bottom: 0.5rem;
+}
+
+.featured-content p {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+/* About Preview */
+.about-preview {
+    background: var(--bg-secondary);
+    padding: 3rem;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.about-content h2 {
+    margin-bottom: 1.5rem;
+}
+
+.about-content p {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    color: var(--text-primary);
+}
+
+/* Contact Preview */
+.contact-preview {
+    text-align: center;
+    background: var(--bg-secondary);
+    padding: 3rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.contact-preview h2 {
+    margin-bottom: 1rem;
+}
+
+.contact-preview p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    color: var(--text-primary);
+}
+
+.contact-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Biography Styles */
+.biography-overview {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.biography-hero {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    align-items: center;
 }
 
 .biography-image img {
     width: 100%;
     border-radius: 12px;
     box-shadow: 0 4px 12px var(--shadow-color);
-    display: block;
-    max-width: 100%;
-    height: auto;
-    position: relative;
-    z-index: 10;
 }
 
 .biography-intro h2 {
@@ -615,406 +1132,3 @@
 .p-2 { padding: 1rem; }
 .p-3 { padding: 1.5rem; }
 .p-4 { padding: 2rem; }
-
-/* Responsive Design for Theme Switcher */
-@media (max-width: 768px) {
-    .theme-switcher {
-        top: 0.5rem;
-        right: 0.5rem;
-        padding: 0.2rem;
-    }
-    
-    .theme-option {
-        width: 28px;
-        height: 28px;
-    }
-    
-    .theme-option svg {
-        width: 14px;
-        height: 14px;
-    }
-    
-    /* Ensure theme switcher doesn't interfere with mobile nav toggle */
-    .theme-switcher {
-        z-index: 1001;
-    }
-    
-    /* Ensure biography image is visible on mobile */
-    .biography-image {
-        margin-top: 1rem;
-    }
-}
-
-/* High contrast mode support for theme switcher */
-@media (prefers-contrast: high) {
-    .theme-switcher {
-        border-width: 2px;
-    }
-    
-    .theme-option.active {
-        border: 2px solid var(--text-primary);
-    }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-    .theme-option:hover {
-        transform: none;
-    }
-    
-    .theme-option {
-        transition: color var(--transition-speed) ease;
-    }
-}
-
-/* Smooth transitions for theme changes */
-* {
-    transition: background-color var(--transition-speed) ease, 
-                color var(--transition-speed) ease, 
-                border-color var(--transition-speed) ease, 
-                box-shadow var(--transition-speed) ease;
-}
-
-/* Theme transition animation */
-body[data-theme] {
-    animation: themeFadeIn 0.3s ease-in-out;
-}
-
-@keyframes themeFadeIn {
-    from {
-        opacity: 0.95;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-/* Theme switcher hover effects */
-.theme-switcher:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 16px var(--shadow-color);
-}
-
-/* Focus states for accessibility */
-.theme-option:focus {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 2px;
-}
-
-.theme-option:focus:not(:focus-visible) {
-    outline: none;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    line-height: 1.6;
-    font-size: 16px;
-    overflow-x: hidden;
-}
-
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-    font-weight: 600;
-    line-height: 1.3;
-    margin-bottom: 1rem;
-    color: var(--text-primary);
-}
-
-/* NDOT 47 Font for Headings */
-h1, h2 {
-    font-family: var(--font-heading);
-    font-weight: normal; /* NDOT 47 typically works better with normal weight */
-}
-
-h3, h4, h5, h6 {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem; }
-h3 { font-size: 1.75rem; }
-h4 { font-size: 1.5rem; }
-h5 { font-size: 1.25rem; }
-h6 { font-size: 1.1rem; }
-
-p {
-    margin-bottom: 1rem;
-    color: var(--text-primary);
-}
-
-a {
-    color: var(--accent-primary);
-    text-decoration: none;
-    transition: color var(--transition-speed) ease;
-}
-
-a:hover {
-    color: var(--accent-hover);
-}
-
-/* Layout */
-.site-container {
-    display: flex;
-    min-height: 100vh;
-}
-
-.main-content {
-    flex: 1;
-    padding: 2rem;
-    margin-left: 20%; /* Account for sidebar width */
-    max-width: calc(100vw - 280px);
-}
-
-/* Page Layouts */
-.page, .post, .portfolio-item {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.page-header, .post-header, .portfolio-header {
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid var(--border-color);
-}
-
-.page-title, .post-title, .portfolio-title {
-    color: var(--accent-primary);
-    margin-bottom: 0.5rem;
-}
-
-/* Add typewriter animation to page-title */
-.page-title {
-    overflow: hidden;
-    white-space: nowrap;
-    animation: typing 2s steps(40, end);
-    animation-fill-mode: forwards;
-    opacity: 0;
-}
-
-.page-subtitle, .post-subtitle, .portfolio-subtitle {
-    font-size: 1.2rem;
-    color: var(--text-primary);
-    margin-bottom: 1rem;
-}
-
-.post-meta, .portfolio-date {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-}
-
-.post-author {
-    margin-right: 1rem;
-}
-
-/* Content */
-.page-content, .post-content, .portfolio-content {
-    margin-bottom: 2rem;
-}
-
-/* Images */
-.post-hero-image, .portfolio-hero-image {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 12px var(--shadow-color);
-}
-
-/* Gallery */
-.portfolio-gallery {
-    margin-top: 3rem;
-}
-
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1rem;
-}
-
-.gallery-item {
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    overflow: hidden;
-    transition: transform var(--transition-speed) ease;
-}
-
-.gallery-item:hover {
-    transform: translateY(-4px);
-}
-
-.gallery-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
-.gallery-caption {
-    padding: 1rem;
-    font-size: 0.9rem;
-    color: var(--text-primary);
-}
-
-/* Tags */
-.portfolio-tags, .post-tags {
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
-}
-
-.tags-label {
-    color: var(--text-muted);
-    margin-right: 0.5rem;
-}
-
-.tag {
-    display: inline-block;
-    background: var(--bg-secondary);
-    color: var(--accent-primary);
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    margin: 0.25rem 0.5rem 0.25rem 0;
-    transition: background-color var(--transition-speed) ease;
-    border: 1px solid var(--border-color);
-}
-
-.tag:hover {
-    background: var(--accent-primary);
-    color: var(--bg-secondary);
-}
-
-/* Buttons */
-.btn {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    background: var(--accent-primary);
-    color: var(--bg-primary);
-    border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 500;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all var(--transition-speed) ease;
-}
-
-.btn:hover {
-    background: var(--accent-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px var(--shadow-color);
-}
-
-.btn-secondary {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-}
-
-.btn-secondary:hover {
-    background: var(--bg-tertiary);
-    border-color: var(--accent-primary);
-}
-
-/* Hero Section */
-.hero-section {
-    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
-    padding: 4rem 2rem;
-    text-align: center;
-    border-radius: 12px;
-    margin-bottom: 3rem;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid var(--border-color);
-}
-
-.hero-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-    opacity: 0.3;
-}
-
-.hero-content {
-    position: relative;
-    z-index: 1;
-}
-
-.hero-title {
-    font-family: var(--font-heading);
-    font-size: 3.5rem;
-    font-weight: normal;
-    margin-bottom: 1rem;
-    color: var(--accent-primary);
-    text-shadow: 0 2px 4px var(--shadow-color);
-    /* Typewriter animation setup */
-    overflow: hidden;
-    white-space: nowrap;
-    margin: 0 auto;
-    animation: typing 2s steps(40, end);
-    animation-fill-mode: forwards;
-    opacity: 0;
-}
-
-.hero-subtitle {
-    font-family: var(--font-heading);
-    font-size: 1.3rem;
-    color: var(--text-primary);
-    margin-bottom: 2rem;
-    font-weight: normal;
-    /* Typewriter animation setup */
-    overflow: hidden;
-    white-space: nowrap;
-    margin: 0 auto;
-    animation: typing 2s steps(40, end) 0.5s;
-    animation-fill-mode: forwards;
-    opacity: 0;
-}
-
-/* Typewriter animation keyframes */
-@keyframes typing {
-    from {
-        width: 0;
-        opacity: 1;
-    }
-    to {
-        width: 100%;
-        opacity: 1;
-    }
-}
-
-.hero-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-/* Biography Styles */
-.biography-overview {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-/* Biography hero section positioning */
-.biography-hero {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 2rem;
-    margin-bottom: 3rem;
-    align-items: center;
-    position: relative;
-    z-index: 10;
-}
