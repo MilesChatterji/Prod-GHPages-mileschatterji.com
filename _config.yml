@@ -61,16 +61,16 @@ navigation:
     submenu:
       - title: Photography
         url: /portfolio/photography/
-      - title: Projects
-        url: /portfolio/projects/
-      - title: Artwork
-        url: /portfolio/artwork/
+      - title: Videography
+        url: /portfolio/video/
+      - title: Tech/Other
+        url: /portfolio/other/
   - title: Contact
     url: /contact/
-    submenu:
-      - title: Get in Touch
-        url: /contact/contact-form/
-      - title: Social Media
-        url: /contact/social/
-      - title: Location
-        url: /contact/location/
+#    submenu:
+#      - title: Get in Touch
+#       url: /contact/contact-form/
+#     - title: Social Media
+#        url: /contact/social/
+#     - title: Location
+#       url: /contact/location/
