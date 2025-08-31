@@ -48,7 +48,7 @@ exclude:
 # Navigation structure
 navigation:
   - title: Biography
-    url: /
+    url: /biography/
     submenu:
       - title: Work History
         url: /biography/experience/
