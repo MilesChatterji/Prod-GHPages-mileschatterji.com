@@ -48,14 +48,12 @@ exclude:
 # Navigation structure
 navigation:
   - title: Biography
-    url: /biography/
+    url: /
     submenu:
-      - title: About Me
-        url: /biography/about/
-      - title: Experience
+      - title: Work History
         url: /biography/experience/
-      - title: Education
-        url: /biography/education/
+      - title: Creative History
+        url: /biography/creative/
   - title: Portfolio
     url: /portfolio/
     submenu:
@@ -63,8 +61,6 @@ navigation:
         url: /portfolio/photography/
       - title: Videography
         url: /portfolio/video/
-      - title: Tech/Other
-        url: /portfolio/other/
   - title: Contact
     url: /contact/
 #    submenu:
