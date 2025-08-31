@@ -351,6 +351,9 @@ class PortfolioCarousel {
     init() {
         if (this.slideCount === 0) return;
         
+        // Apply fallback layout if needed
+        this.applyFallbackLayout();
+        
         // Set initial state
         this.updateCarousel();
         this.updateLargeDisplay();
@@ -382,12 +385,18 @@ class PortfolioCarousel {
     }
     
     updateCarousel() {
-        // Calculate the transform value to show 3 images at once
-        const slideWidth = 100 / this.visibleSlides;
-        const transformValue = -(this.currentIndex * slideWidth);
-        
-        // Update slides container position
-        this.slidesContainer.style.transform = `translateX(${transformValue}%)`;
+        // Check if CSS transforms are supported
+        if (this.supportsTransforms()) {
+            // Modern browser approach using CSS transforms
+            const slideWidth = 100 / this.visibleSlides;
+            const transformValue = -(this.currentIndex * slideWidth);
+            this.slidesContainer.style.transform = `translateX(${transformValue}%)`;
+        } else {
+            // Fallback for older browsers using margin-left
+            const slideWidth = this.slides[0].offsetWidth + 16; // 16px for margin
+            const marginValue = -(this.currentIndex * slideWidth);
+            this.slidesContainer.style.marginLeft = `${marginValue}px`;
+        }
         
         // Update navigation buttons
         this.prevBtn.disabled = this.currentIndex === 0;
@@ -396,6 +405,42 @@ class PortfolioCarousel {
         // Add visual feedback for disabled state
         this.prevBtn.style.opacity = this.currentIndex === 0 ? '0.5' : '1';
         this.nextBtn.style.opacity = this.currentIndex >= Math.max(0, this.slideCount - this.visibleSlides) ? '0.5' : '1';
+    }
+    
+    supportsTransforms() {
+        // Check if CSS transforms are supported
+        const testEl = document.createElement('div');
+        return testEl.style.transform !== undefined || 
+               testEl.style.webkitTransform !== undefined || 
+               testEl.style.mozTransform !== undefined || 
+               testEl.style.msTransform !== undefined;
+    }
+    
+    // Fallback method for browsers with limited CSS support
+    applyFallbackLayout() {
+        if (!this.supportsTransforms() || !this.supportsFlexbox()) {
+            // Apply inline-block fallback layout
+            this.slidesContainer.style.display = 'block';
+            this.slidesContainer.style.whiteSpace = 'nowrap';
+            this.slidesContainer.style.fontSize = '0';
+            
+            this.slides.forEach(slide => {
+                slide.style.display = 'inline-block';
+                slide.style.width = '300px';
+                slide.style.verticalAlign = 'top';
+                slide.style.fontSize = '16px'; // Reset font size
+            });
+            
+            // Use margin-based positioning
+            this.slidesContainer.style.marginLeft = '0';
+        }
+    }
+    
+    supportsFlexbox() {
+        // Check if flexbox is supported
+        const testEl = document.createElement('div');
+        return testEl.style.display !== undefined && 
+               (testEl.style.display = 'flex', testEl.style.display === 'flex');
     }
     
     updateLargeDisplay(index = null) {

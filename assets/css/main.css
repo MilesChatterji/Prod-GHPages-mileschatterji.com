@@ -364,20 +364,28 @@ a:hover {
     max-width: 900px;
     width: 100%;
     position: relative;
+    /* Fallback for older browsers */
+    font-size: 0; /* Removes whitespace between inline-block elements */
 }
 
 .carousel-slides-container {
     display: flex;
-    transition: transform var(--transition-speed) ease;
+    transition: transform 0.3s ease;
+    /* Fallback for older browsers */
+    white-space: nowrap;
+    font-size: 0;
 }
 
 .carousel-slide {
-    min-width: calc(33.333% - 1rem);
+    min-width: 33.333%;
+    width: 33.333%;
     margin-right: 1rem;
-    transition: transform var(--transition-speed) ease;
+    transition: transform 0.3s ease;
     cursor: pointer;
     position: relative;
     flex-shrink: 0;
+    /* Fallback for older browsers */
+    float: left;
 }
 
 .carousel-slide.active {
@@ -388,8 +396,12 @@ a:hover {
     width: 100%;
     height: 200px;
     object-fit: cover;
-    transition: transform var(--transition-speed) ease;
+    transition: transform 0.3s ease;
     border-radius: 8px 8px 0 0;
+    /* Fallback for older browsers */
+    max-width: 100%;
+    height: auto;
+    min-height: 200px;
 }
 
 .carousel-slide:hover .carousel-image {
@@ -422,9 +434,16 @@ a:hover {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all var(--transition-speed) ease;
+    transition: all 0.3s ease;
     z-index: 10;
     box-shadow: 0 4px 12px var(--shadow-color);
+    /* Fallback for older browsers */
+    text-align: center;
+    line-height: 48px;
+    background: #ffffff;
+    border-color: #dee2e6;
+    color: #000000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .carousel-arrow:hover {
@@ -432,6 +451,9 @@ a:hover {
     color: var(--bg-primary);
     transform: translateY(-50%) scale(1.1);
     box-shadow: 0 6px 20px var(--shadow-color);
+    /* Fallback for older browsers */
+    background: #ff8c00;
+    color: #ffffff;
 }
 
 .carousel-prev {
@@ -466,6 +488,57 @@ a:hover {
     font-size: 1.1rem;
     color: var(--text-primary);
     font-weight: 500;
+}
+
+/* Fallback styles for older browsers */
+@supports not (display: flex) {
+    .carousel-track {
+        display: block;
+        text-align: center;
+    }
+    
+    .carousel-slides-container {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    
+    .carousel-slide {
+        display: inline-block;
+        width: 300px;
+        margin-right: 1rem;
+        vertical-align: top;
+    }
+    
+    .carousel-arrow {
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
+
+/* CSS-only fallback for when JavaScript is disabled */
+.carousel-slides-container {
+    /* Ensure slides are visible even without JavaScript */
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+}
+
+.carousel-slides-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.carousel-slides-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.carousel-slides-container::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.carousel-slides-container::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-primary);
 }
 
 /* Responsive adjustments for carousel */
@@ -1314,3 +1387,51 @@ a:hover {
 .p-2 { padding: 1rem; }
 .p-3 { padding: 1.5rem; }
 .p-4 { padding: 2rem; }
+
+/* Browser Compatibility Fallbacks */
+/* For browsers that don't support CSS Grid or Flexbox */
+@supports not (display: grid) {
+    .gallery-grid {
+        display: block;
+    }
+    
+    .gallery-item {
+        display: inline-block;
+        width: calc(50% - 1rem);
+        margin: 0.5rem;
+        vertical-align: top;
+    }
+}
+
+/* For browsers that don't support CSS transforms */
+@supports not (transform: translateX(0)) {
+    .carousel-slides-container {
+        margin-left: 0;
+        transition: margin-left 0.3s ease;
+    }
+}
+
+/* For browsers that don't support CSS custom properties */
+@supports not (color: var(--test)) {
+    .carousel-arrow {
+        background: #ffffff !important;
+        border-color: #dee2e6 !important;
+        color: #000000 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .carousel-arrow:hover {
+        background: #ff8c00 !important;
+        color: #ffffff !important;
+    }
+    
+    .carousel-caption {
+        background: #ffffff !important;
+        color: #000000 !important;
+        border-color: #dee2e6 !important;
+    }
+    
+    .carousel-track {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+    }
+}
