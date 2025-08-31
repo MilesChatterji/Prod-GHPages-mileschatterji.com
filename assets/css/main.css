@@ -374,6 +374,8 @@ a:hover {
     /* Fallback for older browsers */
     white-space: nowrap;
     font-size: 0;
+    /* Ensure container can hold all slides */
+    min-width: 100%;
 }
 
 .carousel-slide {
@@ -386,10 +388,17 @@ a:hover {
     flex-shrink: 0;
     /* Fallback for older browsers */
     float: left;
+    /* Ensure slides are properly sized */
+    box-sizing: border-box;
 }
 
 .carousel-slide.active {
     transform: scale(1.02);
+}
+
+/* Visual indicator for debugging - shows which slides are currently visible */
+.carousel-slide.visible {
+    border: 2px solid var(--accent-primary);
 }
 
 .carousel-image {
@@ -400,7 +409,6 @@ a:hover {
     border-radius: 8px 8px 0 0;
     /* Fallback for older browsers */
     max-width: 100%;
-    height: auto;
     min-height: 200px;
 }
 

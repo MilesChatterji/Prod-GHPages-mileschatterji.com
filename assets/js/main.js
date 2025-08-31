@@ -351,6 +351,10 @@ class PortfolioCarousel {
     init() {
         if (this.slideCount === 0) return;
         
+        console.log(`Initializing carousel with ${this.slideCount} slides, visible: ${this.visibleSlides}`);
+        console.log('Slides found:', this.slides.length);
+        console.log('Navigation buttons:', this.prevBtn, this.nextBtn);
+        
         // Apply fallback layout if needed
         this.applyFallbackLayout();
         
@@ -388,9 +392,14 @@ class PortfolioCarousel {
         // Check if CSS transforms are supported
         if (this.supportsTransforms()) {
             // Modern browser approach using CSS transforms
+            // Calculate the transform value to show 3 images at once
             const slideWidth = 100 / this.visibleSlides;
             const transformValue = -(this.currentIndex * slideWidth);
             this.slidesContainer.style.transform = `translateX(${transformValue}%)`;
+            
+            // Ensure the slides container is wide enough for all slides
+            const totalWidth = (this.slideCount / this.visibleSlides) * 100;
+            this.slidesContainer.style.width = `${totalWidth}%`;
         } else {
             // Fallback for older browsers using margin-left
             const slideWidth = this.slides[0].offsetWidth + 16; // 16px for margin
@@ -405,6 +414,17 @@ class PortfolioCarousel {
         // Add visual feedback for disabled state
         this.prevBtn.style.opacity = this.currentIndex === 0 ? '0.5' : '1';
         this.nextBtn.style.opacity = this.currentIndex >= Math.max(0, this.slideCount - this.visibleSlides) ? '0.5' : '1';
+        
+        // Debug logging
+        console.log(`Carousel: ${this.slideCount} total slides, current index: ${this.currentIndex}, visible: ${this.visibleSlides}`);
+        
+        // Mark which slides are currently visible
+        this.slides.forEach((slide, index) => {
+            slide.classList.remove('visible');
+            if (index >= this.currentIndex && index < this.currentIndex + this.visibleSlides) {
+                slide.classList.add('visible');
+            }
+        });
     }
     
     supportsTransforms() {
@@ -458,15 +478,26 @@ class PortfolioCarousel {
     
     previousSlide() {
         if (this.currentIndex > 0) {
+            // Move to the previous set of 3 images
             this.currentIndex = Math.max(0, this.currentIndex - this.visibleSlides);
             this.updateCarousel();
+            console.log(`Previous: moved to index ${this.currentIndex}`);
+        } else {
+            console.log(`Previous: already at index 0`);
         }
     }
     
     nextSlide() {
-        if (this.currentIndex < Math.max(0, this.slideCount - this.visibleSlides)) {
-            this.currentIndex = Math.min(this.slideCount - this.visibleSlides, this.currentIndex + this.visibleSlides);
+        // Calculate the maximum index we can go to
+        const maxIndex = Math.max(0, this.slideCount - this.visibleSlides);
+        
+        if (this.currentIndex < maxIndex) {
+            // Move to the next set of 3 images
+            this.currentIndex = Math.min(maxIndex, this.currentIndex + this.visibleSlides);
             this.updateCarousel();
+            console.log(`Next: moved to index ${this.currentIndex}`);
+        } else {
+            console.log(`Next: already at max index ${this.currentIndex}`);
         }
     }
     
