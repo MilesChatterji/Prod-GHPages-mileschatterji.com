@@ -18,34 +18,30 @@ layout: default
     {% if page.gallery %}
     <div class="portfolio-carousel-container">
         <div class="portfolio-carousel">
-            <button class="carousel-arrow carousel-prev" aria-label="Previous image">
+            <button class="carousel-arrow carousel-prev" aria-label="Previous images">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M15 18l-6-6 6-6"/>
                 </svg>
             </button>
             
             <div class="carousel-track">
-                {% for image in page.gallery %}
-                <div class="carousel-slide" data-index="{{ forloop.index0 }}">
-                    <img src="{{ image.url | relative_url }}" alt="{{ image.alt }}" class="carousel-image">
-                    {% if image.caption %}
-                    <p class="carousel-caption">{{ image.caption }}</p>
-                    {% endif %}
+                <div class="carousel-slides-container">
+                    {% for image in page.gallery %}
+                    <div class="carousel-slide" data-index="{{ forloop.index0 }}">
+                        <img src="{{ image.url | relative_url }}" alt="{{ image.alt }}" class="carousel-image">
+                        {% if image.caption %}
+                        <p class="carousel-caption">{{ image.caption }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
             
-            <button class="carousel-arrow carousel-next" aria-label="Next image">
+            <button class="carousel-arrow carousel-next" aria-label="Next images">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M9 18l6-6-6-6"/>
                 </svg>
             </button>
-        </div>
-        
-        <div class="carousel-indicators">
-            {% for image in page.gallery %}
-            <button class="carousel-indicator" data-index="{{ forloop.index0 }}" aria-label="Go to image {{ forloop.index }}"></button>
-            {% endfor %}
         </div>
         
         <div class="carousel-large-display">

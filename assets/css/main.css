@@ -361,13 +361,19 @@ a:hover {
     overflow: hidden;
     border-radius: 12px;
     box-shadow: 0 8px 24px var(--shadow-color);
-    max-width: 800px;
+    max-width: 900px;
     width: 100%;
     position: relative;
 }
 
+.carousel-slides-container {
+    display: flex;
+    transition: transform var(--transition-speed) ease;
+}
+
 .carousel-slide {
-    min-width: 100%;
+    min-width: calc(33.333% - 1rem);
+    margin-right: 1rem;
     transition: transform var(--transition-speed) ease;
     cursor: pointer;
     position: relative;
@@ -380,9 +386,10 @@ a:hover {
 
 .carousel-image {
     width: 100%;
-    height: 400px;
+    height: 200px;
     object-fit: cover;
     transition: transform var(--transition-speed) ease;
+    border-radius: 8px 8px 0 0;
 }
 
 .carousel-slide:hover .carousel-image {
@@ -392,12 +399,13 @@ a:hover {
 .carousel-caption {
     background: var(--bg-secondary);
     color: var(--text-primary);
-    padding: 1rem;
+    padding: 0.75rem;
     text-align: center;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 500;
     margin: 0;
     border-top: 1px solid var(--border-color);
+    border-radius: 0 0 8px 8px;
 }
 
 .carousel-arrow {
@@ -427,39 +435,14 @@ a:hover {
 }
 
 .carousel-prev {
-    left: -24px;
+    left: -30px;
 }
 
 .carousel-next {
-    right: -24px;
+    right: -30px;
 }
 
-.carousel-indicators {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-}
 
-.carousel-indicator {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--border-color);
-    border: none;
-    cursor: pointer;
-    transition: all var(--transition-speed) ease;
-}
-
-.carousel-indicator.active {
-    background: var(--accent-primary);
-    transform: scale(1.2);
-}
-
-.carousel-indicator:hover {
-    background: var(--accent-secondary);
-    transform: scale(1.1);
-}
 
 .carousel-large-display {
     text-align: center;
@@ -505,11 +488,16 @@ a:hover {
     }
     
     .carousel-image {
-        height: 300px;
+        height: 150px;
     }
     
     .carousel-track {
         max-width: 100%;
+    }
+    
+    .carousel-slide {
+        min-width: calc(33.333% - 0.5rem);
+        margin-right: 0.5rem;
     }
 }
 
@@ -528,7 +516,12 @@ a:hover {
     }
     
     .carousel-image {
-        height: 250px;
+        height: 120px;
+    }
+    
+    .carousel-slide {
+        min-width: calc(33.333% - 0.25rem);
+        margin-right: 0.25rem;
     }
 }
 

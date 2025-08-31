@@ -334,15 +334,16 @@ class PortfolioCarousel {
         if (!this.carousel) return;
         
         this.track = this.carousel.querySelector('.carousel-track');
+        this.slidesContainer = this.carousel.querySelector('.carousel-slides-container');
         this.slides = this.carousel.querySelectorAll('.carousel-slide');
         this.prevBtn = this.carousel.querySelector('.carousel-prev');
         this.nextBtn = this.carousel.querySelector('.carousel-next');
-        this.indicators = document.querySelectorAll('.carousel-indicator');
         this.largeImage = document.getElementById('large-display-image');
         this.largeCaption = document.getElementById('large-display-caption');
         
         this.currentIndex = 0;
         this.slideCount = this.slides.length;
+        this.visibleSlides = 3;
         
         this.init();
     }
@@ -357,11 +358,6 @@ class PortfolioCarousel {
         // Add event listeners
         this.prevBtn.addEventListener('click', () => this.previousSlide());
         this.nextBtn.addEventListener('click', () => this.nextSlide());
-        
-        // Add indicator click events
-        this.indicators.forEach((indicator, index) => {
-            indicator.addEventListener('click', () => this.goToSlide(index));
-        });
         
         // Add slide click events for large display
         this.slides.forEach((slide, index) => {
@@ -386,64 +382,52 @@ class PortfolioCarousel {
     }
     
     updateCarousel() {
-        // Update slide positions
-        this.slides.forEach((slide, index) => {
-            slide.style.transform = `translateX(${(index - this.currentIndex) * 100}%)`;
-            slide.classList.toggle('active', index === this.currentIndex);
-        });
+        // Calculate the transform value to show 3 images at once
+        const slideWidth = 100 / this.visibleSlides;
+        const transformValue = -(this.currentIndex * slideWidth);
         
-        // Update indicators
-        this.indicators.forEach((indicator, index) => {
-            indicator.classList.toggle('active', index === this.currentIndex);
-        });
+        // Update slides container position
+        this.slidesContainer.style.transform = `translateX(${transformValue}%)`;
         
         // Update navigation buttons
         this.prevBtn.disabled = this.currentIndex === 0;
-        this.nextBtn.disabled = this.currentIndex === this.slideCount - 1;
+        this.nextBtn.disabled = this.currentIndex >= Math.max(0, this.slideCount - this.visibleSlides);
         
         // Add visual feedback for disabled state
         this.prevBtn.style.opacity = this.currentIndex === 0 ? '0.5' : '1';
-        this.nextBtn.style.opacity = this.currentIndex === this.slideCount - 1 ? '0.5' : '1';
+        this.nextBtn.style.opacity = this.currentIndex >= Math.max(0, this.slideCount - this.visibleSlides) ? '0.5' : '1';
     }
     
-    updateLargeDisplay() {
+    updateLargeDisplay(index = null) {
         if (!this.largeImage || !this.largeCaption) return;
         
-        const currentSlide = this.slides[this.currentIndex];
-        const currentImage = currentSlide.querySelector('.carousel-image');
-        const currentCaption = currentSlide.querySelector('.carousel-caption');
+        const targetIndex = index !== null ? index : this.currentIndex;
+        const targetSlide = this.slides[targetIndex];
+        const targetImage = targetSlide.querySelector('.carousel-image');
+        const targetCaption = targetSlide.querySelector('.carousel-caption');
         
-        this.largeImage.src = currentImage.src;
-        this.largeImage.alt = currentImage.alt;
-        this.largeCaption.textContent = currentCaption ? currentCaption.textContent : '';
+        this.largeImage.src = targetImage.src;
+        this.largeImage.alt = targetImage.alt;
+        this.largeCaption.textContent = targetCaption ? targetCaption.textContent : '';
     }
     
     previousSlide() {
         if (this.currentIndex > 0) {
-            this.currentIndex--;
+            this.currentIndex = Math.max(0, this.currentIndex - this.visibleSlides);
             this.updateCarousel();
-            this.updateLargeDisplay();
         }
     }
     
     nextSlide() {
-        if (this.currentIndex < this.slideCount - 1) {
-            this.currentIndex++;
+        if (this.currentIndex < Math.max(0, this.slideCount - this.visibleSlides)) {
+            this.currentIndex = Math.min(this.slideCount - this.visibleSlides, this.currentIndex + this.visibleSlides);
             this.updateCarousel();
-            this.updateLargeDisplay();
-        }
-    }
-    
-    goToSlide(index) {
-        if (index >= 0 && index < this.slideCount) {
-            this.currentIndex = index;
-            this.updateCarousel();
-            this.updateLargeDisplay();
         }
     }
     
     selectSlide(index) {
-        this.goToSlide(index);
+        // Update large display when a slide is clicked
+        this.updateLargeDisplay(index);
     }
     
     addTouchSupport() {
