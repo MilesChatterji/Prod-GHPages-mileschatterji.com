@@ -327,14 +327,14 @@ class ThemeSwitcher {
     }
 }
 
-// Portfolio Carousel Functionality
+// Portfolio Carousel - Complete Rewrite
 class PortfolioCarousel {
     constructor() {
         this.carousel = document.querySelector('.portfolio-carousel');
         if (!this.carousel) return;
         
+        this.viewport = this.carousel.querySelector('.carousel-viewport');
         this.track = this.carousel.querySelector('.carousel-track');
-        this.slidesContainer = this.carousel.querySelector('.carousel-slides-container');
         this.slides = this.carousel.querySelectorAll('.carousel-slide');
         this.prevBtn = this.carousel.querySelector('.carousel-prev');
         this.nextBtn = this.carousel.querySelector('.carousel-next');
@@ -345,18 +345,15 @@ class PortfolioCarousel {
         this.slideCount = this.slides.length;
         this.visibleSlides = 3;
         
+        console.log(`Carousel initialized with ${this.slideCount} slides`);
+        
         this.init();
     }
     
     init() {
         if (this.slideCount === 0) return;
         
-        console.log(`Initializing carousel with ${this.slideCount} slides, visible: ${this.visibleSlides}`);
-        console.log('Slides found:', this.slides.length);
-        console.log('Navigation buttons:', this.prevBtn, this.nextBtn);
-        
-        // Apply fallback layout if needed
-        this.applyFallbackLayout();
+        console.log(`Initializing carousel with ${this.slideCount} slides`);
         
         // Set initial state
         this.updateCarousel();
@@ -389,23 +386,12 @@ class PortfolioCarousel {
     }
     
     updateCarousel() {
-        // Check if CSS transforms are supported
-        if (this.supportsTransforms()) {
-            // Modern browser approach using CSS transforms
-            // Calculate the transform value to show 3 images at once
-            const slideWidth = 100 / this.visibleSlides;
-            const transformValue = -(this.currentIndex * slideWidth);
-            this.slidesContainer.style.transform = `translateX(${transformValue}%)`;
-            
-            // Ensure the slides container is wide enough for all slides
-            const totalWidth = (this.slideCount / this.visibleSlides) * 100;
-            this.slidesContainer.style.width = `${totalWidth}%`;
-        } else {
-            // Fallback for older browsers using margin-left
-            const slideWidth = this.slides[0].offsetWidth + 16; // 16px for margin
-            const marginValue = -(this.currentIndex * slideWidth);
-            this.slidesContainer.style.marginLeft = `${marginValue}px`;
-        }
+        // Calculate the slide width (33.333% + margin)
+        const slideWidth = 33.333 + (1 / 3); // 33.333% + margin adjustment
+        const transformValue = -(this.currentIndex * slideWidth);
+        
+        // Apply transform to move the track
+        this.track.style.transform = `translateX(${transformValue}%)`;
         
         // Update navigation buttons
         this.prevBtn.disabled = this.currentIndex === 0;
@@ -415,53 +401,10 @@ class PortfolioCarousel {
         this.prevBtn.style.opacity = this.currentIndex === 0 ? '0.5' : '1';
         this.nextBtn.style.opacity = this.currentIndex >= Math.max(0, this.slideCount - this.visibleSlides) ? '0.5' : '1';
         
-        // Debug logging
-        console.log(`Carousel: ${this.slideCount} total slides, current index: ${this.currentIndex}, visible: ${this.visibleSlides}`);
-        
-        // Mark which slides are currently visible
-        this.slides.forEach((slide, index) => {
-            slide.classList.remove('visible');
-            if (index >= this.currentIndex && index < this.currentIndex + this.visibleSlides) {
-                slide.classList.add('visible');
-            }
-        });
+        console.log(`Carousel: ${this.slideCount} slides, current index: ${this.currentIndex}, transform: ${transformValue}%`);
     }
     
-    supportsTransforms() {
-        // Check if CSS transforms are supported
-        const testEl = document.createElement('div');
-        return testEl.style.transform !== undefined || 
-               testEl.style.webkitTransform !== undefined || 
-               testEl.style.mozTransform !== undefined || 
-               testEl.style.msTransform !== undefined;
-    }
-    
-    // Fallback method for browsers with limited CSS support
-    applyFallbackLayout() {
-        if (!this.supportsTransforms() || !this.supportsFlexbox()) {
-            // Apply inline-block fallback layout
-            this.slidesContainer.style.display = 'block';
-            this.slidesContainer.style.whiteSpace = 'nowrap';
-            this.slidesContainer.style.fontSize = '0';
-            
-            this.slides.forEach(slide => {
-                slide.style.display = 'inline-block';
-                slide.style.width = '300px';
-                slide.style.verticalAlign = 'top';
-                slide.style.fontSize = '16px'; // Reset font size
-            });
-            
-            // Use margin-based positioning
-            this.slidesContainer.style.marginLeft = '0';
-        }
-    }
-    
-    supportsFlexbox() {
-        // Check if flexbox is supported
-        const testEl = document.createElement('div');
-        return testEl.style.display !== undefined && 
-               (testEl.style.display = 'flex', testEl.style.display === 'flex');
-    }
+
     
     updateLargeDisplay(index = null) {
         if (!this.largeImage || !this.largeCaption) return;
@@ -478,31 +421,22 @@ class PortfolioCarousel {
     
     previousSlide() {
         if (this.currentIndex > 0) {
-            // Move to the previous set of 3 images
             this.currentIndex = Math.max(0, this.currentIndex - this.visibleSlides);
             this.updateCarousel();
-            console.log(`Previous: moved to index ${this.currentIndex}`);
-        } else {
-            console.log(`Previous: already at index 0`);
+            console.log(`Previous: index ${this.currentIndex}`);
         }
     }
     
     nextSlide() {
-        // Calculate the maximum index we can go to
         const maxIndex = Math.max(0, this.slideCount - this.visibleSlides);
-        
         if (this.currentIndex < maxIndex) {
-            // Move to the next set of 3 images
             this.currentIndex = Math.min(maxIndex, this.currentIndex + this.visibleSlides);
             this.updateCarousel();
-            console.log(`Next: moved to index ${this.currentIndex}`);
-        } else {
-            console.log(`Next: already at max index ${this.currentIndex}`);
+            console.log(`Next: index ${this.currentIndex}`);
         }
     }
     
     selectSlide(index) {
-        // Update large display when a slide is clicked
         this.updateLargeDisplay(index);
     }
     
@@ -518,7 +452,7 @@ class PortfolioCarousel {
             endX = e.changedTouches[0].clientX;
             const diff = startX - endX;
             
-            if (Math.abs(diff) > 50) { // Minimum swipe distance
+            if (Math.abs(diff) > 50) {
                 if (diff > 0) {
                     this.nextSlide();
                 } else {

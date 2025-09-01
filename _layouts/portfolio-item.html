@@ -28,8 +28,8 @@ layout: default
                 </svg>
             </button>
             
-            <div class="carousel-track">
-                <div class="carousel-slides-container">
+            <div class="carousel-viewport">
+                <div class="carousel-track">
                     {% for image in page.gallery %}
                     <div class="carousel-slide" data-index="{{ forloop.index0 }}">
                         <img src="{{ image.url | relative_url }}" alt="{{ image.alt }}" class="carousel-image">
@@ -54,28 +54,6 @@ layout: default
         </div>
     </div>
     {% endif %}
-    
-    <!-- if content is wanted on the bottom
-     <div class="portfolio-content">
-        {{ content }}
-    </div> -->
-    
-    <!--
-    {% if page.gallery %}
-    <div class="portfolio-gallery">
-        <h2>Gallery</h2>
-        <div class="gallery-grid">
-            {% for image in page.gallery %}
-            <div class="gallery-item">
-                <img src="{{ image.url | relative_url }}" alt="{{ image.alt }}" class="gallery-image">
-                {% if image.caption %}
-                <p class="gallery-caption">{{ image.caption }}</p>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %} -->
     
     {% if page.tags %}
     <footer class="portfolio-footer">

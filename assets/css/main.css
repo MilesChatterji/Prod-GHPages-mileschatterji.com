@@ -343,7 +343,7 @@ a:hover {
     box-shadow: 0 4px 12px var(--shadow-color);
 }
 
-/* Portfolio Carousel */
+/* Portfolio Carousel - Complete Rewrite */
 .portfolio-carousel-container {
     margin: 2rem 0 3rem 0;
 }
@@ -356,60 +356,43 @@ a:hover {
     margin-bottom: 1rem;
 }
 
-.carousel-track {
-    display: flex;
+.carousel-viewport {
+    width: 100%;
+    max-width: 900px;
     overflow: hidden;
     border-radius: 12px;
     box-shadow: 0 8px 24px var(--shadow-color);
-    max-width: 900px;
-    width: 100%;
     position: relative;
-    /* Fallback for older browsers */
-    font-size: 0; /* Removes whitespace between inline-block elements */
 }
 
-.carousel-slides-container {
+.carousel-track {
     display: flex;
     transition: transform 0.3s ease;
-    /* Fallback for older browsers */
-    white-space: nowrap;
-    font-size: 0;
-    /* Ensure container can hold all slides */
-    min-width: 100%;
+    width: 100%;
 }
 
 .carousel-slide {
-    min-width: 33.333%;
-    width: 33.333%;
+    flex: 0 0 calc(33.333% - 0.67rem);
     margin-right: 1rem;
-    transition: transform 0.3s ease;
     cursor: pointer;
     position: relative;
-    flex-shrink: 0;
-    /* Fallback for older browsers */
-    float: left;
-    /* Ensure slides are properly sized */
-    box-sizing: border-box;
+    transition: transform 0.3s ease;
 }
 
-.carousel-slide.active {
+.carousel-slide:last-child {
+    margin-right: 0;
+}
+
+.carousel-slide:hover {
     transform: scale(1.02);
-}
-
-/* Visual indicator for debugging - shows which slides are currently visible */
-.carousel-slide.visible {
-    border: 2px solid var(--accent-primary);
 }
 
 .carousel-image {
     width: 100%;
     height: 200px;
     object-fit: cover;
-    transition: transform 0.3s ease;
     border-radius: 8px 8px 0 0;
-    /* Fallback for older browsers */
-    max-width: 100%;
-    min-height: 200px;
+    transition: transform 0.3s ease;
 }
 
 .carousel-slide:hover .carousel-image {
@@ -498,56 +481,7 @@ a:hover {
     font-weight: 500;
 }
 
-/* Fallback styles for older browsers */
-@supports not (display: flex) {
-    .carousel-track {
-        display: block;
-        text-align: center;
-    }
-    
-    .carousel-slides-container {
-        display: block;
-        white-space: nowrap;
-        overflow: hidden;
-    }
-    
-    .carousel-slide {
-        display: inline-block;
-        width: 300px;
-        margin-right: 1rem;
-        vertical-align: top;
-    }
-    
-    .carousel-arrow {
-        display: inline-block;
-        vertical-align: middle;
-    }
-}
 
-/* CSS-only fallback for when JavaScript is disabled */
-.carousel-slides-container {
-    /* Ensure slides are visible even without JavaScript */
-    overflow-x: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border-color) transparent;
-}
-
-.carousel-slides-container::-webkit-scrollbar {
-    height: 8px;
-}
-
-.carousel-slides-container::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.carousel-slides-container::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 4px;
-}
-
-.carousel-slides-container::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-primary);
-}
 
 /* Responsive adjustments for carousel */
 @media (max-width: 768px) {
@@ -572,12 +506,8 @@ a:hover {
         height: 150px;
     }
     
-    .carousel-track {
-        max-width: 100%;
-    }
-    
     .carousel-slide {
-        min-width: calc(33.333% - 0.5rem);
+        flex: 0 0 calc(33.333% - 0.33rem);
         margin-right: 0.5rem;
     }
 }
@@ -601,7 +531,7 @@ a:hover {
     }
     
     .carousel-slide {
-        min-width: calc(33.333% - 0.25rem);
+        flex: 0 0 calc(33.333% - 0.17rem);
         margin-right: 0.25rem;
     }
 }
