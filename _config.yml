@@ -50,7 +50,7 @@ navigation:
   - title: Biography
     url: /biography/
     submenu:
-      - title: Work History
+      - title: Professional History
         url: /biography/experience/
       - title: Creative History
         url: /biography/creative/
