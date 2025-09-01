@@ -288,7 +288,7 @@ a:hover {
 }
 
 /* Page Layouts */
-.page, .post, .portfolio-item {
+.page, .post, .portfolio-item, .video-portfolio-item {
     max-width: 800px;
     margin: 0 auto;
 }
@@ -493,7 +493,7 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
 .video-carousel .carousel-viewport {
