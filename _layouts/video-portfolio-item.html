@@ -1,0 +1,86 @@
+---
+layout: default
+---
+
+<article class="video-portfolio-item">
+    <header class="portfolio-header">
+        <h1 class="portfolio-title">{{ page.title }}</h1>
+        {% if page.subtitle %}
+        <p class="portfolio-subtitle">{{ page.subtitle }}</p>
+        {% endif %}
+        {% if page.date %}
+        <time class="portfolio-date" datetime="{{ page.date | date_to_xmlschema }}">
+            {{ page.date | date: "%B %d, %Y" }}
+        </time>
+        {% endif %}
+    </header>
+
+    <div class="portfolio-content">
+        {{ content }}
+    </div>
+    
+    {% if page.videos %}
+    <div class="video-carousel-container">
+        <div class="video-carousel">
+            <button class="carousel-arrow carousel-prev" aria-label="Previous videos">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+            </button>
+            
+            <div class="carousel-viewport">
+                <div class="carousel-track">
+                    {% for video in page.videos %}
+                    <div class="carousel-slide" data-index="{{ forloop.index0 }}" data-video-id="{{ video.youtube_id }}">
+                        <div class="video-thumbnail">
+                            <img src="https://img.youtube.com/vi/{{ video.youtube_id }}/maxresdefault.jpg" 
+                                 alt="{{ video.title }}" 
+                                 class="carousel-image"
+                                 onerror="this.src='https://img.youtube.com/vi/{{ video.youtube_id }}/hqdefault.jpg';">
+                            <div class="video-play-overlay">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        {% if video.title %}
+                        <p class="carousel-caption">{{ video.title }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <button class="carousel-arrow carousel-next" aria-label="Next videos">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="video-player-container">
+            <div class="video-player-wrapper">
+                <iframe id="video-player" 
+                        src="https://www.youtube.com/embed/{{ page.videos[0].youtube_id }}?rel=0" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen
+                        class="video-player">
+                </iframe>
+            </div>
+            <p class="video-title" id="video-title">{{ page.videos[0].title }}</p>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if page.tags %}
+    <footer class="portfolio-footer">
+        <div class="portfolio-tags">
+            <span class="tags-label">Tags:</span>
+            {% for tag in page.tags %}
+            <span class="tag">{{ tag }}</span>
+            {% endfor %}
+        </div>
+    </footer>
+    {% endif %}
+</article>

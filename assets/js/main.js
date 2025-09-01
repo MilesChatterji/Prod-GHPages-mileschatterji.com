@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize portfolio carousel
     new PortfolioCarousel();
+    
+    // Initialize video carousel
+    new VideoCarousel();
 });
 
 function initializeSite() {
@@ -460,6 +463,161 @@ class PortfolioCarousel {
                 }
             }
         }, { passive: true });
+    }
+}
+
+// Video Carousel - Complete Rewrite
+class VideoCarousel {
+    constructor() {
+        this.carousel = document.querySelector('.video-carousel');
+        if (!this.carousel) return;
+        
+        this.viewport = this.carousel.querySelector('.carousel-viewport');
+        this.track = this.carousel.querySelector('.carousel-track');
+        this.slides = this.carousel.querySelectorAll('.carousel-slide');
+        this.prevBtn = this.carousel.querySelector('.carousel-prev');
+        this.nextBtn = this.carousel.querySelector('.carousel-next');
+        this.videoPlayer = document.getElementById('video-player');
+        this.videoTitle = document.getElementById('video-title');
+        
+        this.currentIndex = 0;
+        this.slideCount = this.slides.length;
+        this.visibleSlides = 3;
+        
+        console.log(`Video carousel initialized with ${this.slideCount} videos`);
+        
+        this.init();
+    }
+    
+    init() {
+        if (this.slideCount === 0) return;
+        
+        console.log(`Initializing video carousel with ${this.slideCount} videos`);
+        
+        // Set initial state
+        this.updateCarousel();
+        this.updateVideoPlayer();
+        
+        // Add event listeners
+        this.prevBtn.addEventListener('click', () => this.previousSlide());
+        this.nextBtn.addEventListener('click', () => this.nextSlide());
+        
+        // Add slide click events for video player
+        this.slides.forEach((slide, index) => {
+            slide.addEventListener('click', () => this.selectVideo(index));
+        });
+        
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (this.carousel.matches(':focus-within') || this.carousel.contains(document.activeElement)) {
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    this.previousSlide();
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    this.nextSlide();
+                }
+            }
+        });
+        
+        // Add touch/swipe support for mobile
+        this.addTouchSupport();
+    }
+    
+    updateCarousel() {
+        // Calculate the slide width (33.333% + margin)
+        const slideWidth = 33.333 + (1 / 3); // 33.333% + margin adjustment
+        const transformValue = -(this.currentIndex * slideWidth);
+        
+        // Apply transform to move the track
+        this.track.style.transform = `translateX(${transformValue}%)`;
+        
+        // Update navigation buttons
+        this.prevBtn.disabled = this.currentIndex === 0;
+        this.nextBtn.disabled = this.currentIndex >= Math.max(0, this.slideCount - this.visibleSlides);
+        
+        // Add visual feedback for disabled state
+        this.prevBtn.style.opacity = this.currentIndex === 0 ? '0.5' : '1';
+        this.nextBtn.style.opacity = this.currentIndex >= Math.max(0, this.slideCount - this.visibleSlides) ? '0.5' : '1';
+        
+        // Update active slide highlighting
+        this.slides.forEach((slide, index) => {
+            slide.classList.remove('active');
+            if (index === this.currentIndex) {
+                slide.classList.add('active');
+            }
+        });
+        
+        console.log(`Video carousel: ${this.slideCount} videos, current index: ${this.currentIndex}, transform: ${transformValue}%`);
+    }
+    
+    updateVideoPlayer() {
+        if (!this.videoPlayer || !this.videoTitle) return;
+        
+        const currentSlide = this.slides[this.currentIndex];
+        const videoId = currentSlide.dataset.videoId;
+        const videoTitle = currentSlide.querySelector('.carousel-caption')?.textContent || '';
+        
+        // Update video player
+        this.videoPlayer.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
+        this.videoTitle.textContent = videoTitle;
+        
+        console.log(`Video player updated: ${videoId} - ${videoTitle}`);
+    }
+    
+    previousSlide() {
+        if (this.currentIndex > 0) {
+            this.currentIndex = Math.max(0, this.currentIndex - this.visibleSlides);
+            this.updateCarousel();
+            this.updateVideoPlayer();
+            console.log(`Previous video: index ${this.currentIndex}`);
+        }
+    }
+    
+    nextSlide() {
+        const maxIndex = Math.max(0, this.slideCount - this.visibleSlides);
+        if (this.currentIndex < maxIndex) {
+            this.currentIndex = Math.min(maxIndex, this.currentIndex + this.visibleSlides);
+            this.updateCarousel();
+            this.updateVideoPlayer();
+            console.log(`Next video: index ${this.currentIndex}`);
+        }
+    }
+    
+    selectVideo(index) {
+        this.currentIndex = index;
+        this.updateCarousel();
+        this.updateVideoPlayer();
+        console.log(`Selected video: index ${index}`);
+    }
+    
+    addTouchSupport() {
+        let startX = 0;
+        let endX = 0;
+        
+        this.track.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        }, { passive: true });
+        
+        this.track.addEventListener('touchend', (e) => {
+            endX = e.changedTouches[0].clientX;
+            const diff = startX - endX;
+            
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    this.nextSlide();
+                } else {
+                    this.previousSlide();
+                }
+            }
+        }, { passive: true });
+    }
+    
+    // Utility function to extract YouTube ID from URL
+    static extractYouTubeId(url) {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : null;
     }
 }
 
