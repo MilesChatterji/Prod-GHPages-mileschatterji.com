@@ -221,8 +221,32 @@
 }
 
 .nav-item:hover .submenu,
-.nav-item:focus-within .submenu {
+.nav-item:focus-within .submenu,
+.nav-item.active-section .submenu {
     max-height: 200px;
+}
+
+/* Active section styling */
+.nav-item.active-section .nav-link {
+    color: var(--accent-primary);
+    background: var(--bg-tertiary);
+    border-left-color: var(--accent-primary);
+    font-weight: 600;
+}
+
+.nav-item.active-section .nav-link::after {
+    content: '▼';
+    float: right;
+    font-size: 0.8rem;
+    transition: transform var(--transition-speed) ease;
+}
+
+.nav-item:not(.active-section) .nav-link::after {
+    content: '▶';
+    float: right;
+    font-size: 0.8rem;
+    opacity: 0.5;
+    transition: transform var(--transition-speed) ease;
 }
 
 /* Focus states for accessibility */

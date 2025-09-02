@@ -51,6 +51,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle navigation active states
     const currentPath = window.location.pathname;
     const navLinks = document.querySelectorAll('.nav-link, .submenu-link');
+    const navItems = document.querySelectorAll('.nav-item');
+    
+    // First, remove all active states
+    navItems.forEach(item => {
+        item.classList.remove('active-section');
+        const itemLinks = item.querySelectorAll('.nav-link, .submenu-link');
+        itemLinks.forEach(link => link.classList.remove('active'));
+    });
+    
+    // Find the active section
+    let activeSection = null;
     
     navLinks.forEach(link => {
         const linkPath = link.getAttribute('href');
@@ -64,16 +75,25 @@ document.addEventListener('DOMContentLoaded', function() {
             (normalizedCurrentPath.startsWith(normalizedLinkPath) && normalizedLinkPath !== '/')) {
             link.classList.add('active');
             
-            // If it's a submenu link, also highlight the parent
+            // If it's a submenu link, mark the parent section as active
             const parentNavItem = link.closest('.nav-item');
             if (parentNavItem) {
                 const parentLink = parentNavItem.querySelector('.nav-link');
                 if (parentLink) {
                     parentLink.classList.add('active');
+                    activeSection = parentNavItem;
                 }
+            } else {
+                // If it's a main nav link, mark this section as active
+                activeSection = link.closest('.nav-item');
             }
         }
     });
+    
+    // Set the active section
+    if (activeSection) {
+        activeSection.classList.add('active-section');
+    }
     
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -90,30 +110,34 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Add hover effects for navigation items
-    const navItems = document.querySelectorAll('.nav-item');
-    
     navItems.forEach(item => {
         const navLink = item.querySelector('.nav-link');
         const submenu = item.querySelector('.submenu');
         
         if (submenu) {
-            // Show submenu on hover/focus
+            // Show submenu on hover/focus (but not if it's the active section)
             item.addEventListener('mouseenter', function() {
-                submenu.style.maxHeight = submenu.scrollHeight + 'px';
+                if (!item.classList.contains('active-section')) {
+                    submenu.style.maxHeight = submenu.scrollHeight + 'px';
+                }
             });
             
             item.addEventListener('mouseleave', function() {
-                submenu.style.maxHeight = '0';
+                if (!item.classList.contains('active-section')) {
+                    submenu.style.maxHeight = '0';
+                }
             });
             
             // Handle focus events for accessibility
             item.addEventListener('focusin', function() {
-                submenu.style.maxHeight = submenu.scrollHeight + 'px';
+                if (!item.classList.contains('active-section')) {
+                    submenu.style.maxHeight = submenu.scrollHeight + 'px';
+                }
             });
             
             item.addEventListener('focusout', function() {
-                // Only hide if focus is not within the submenu
-                if (!submenu.contains(document.activeElement)) {
+                // Only hide if focus is not within the submenu and not active section
+                if (!submenu.contains(document.activeElement) && !item.classList.contains('active-section')) {
                     submenu.style.maxHeight = '0';
                 }
             });
