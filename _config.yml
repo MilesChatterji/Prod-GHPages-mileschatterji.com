@@ -59,8 +59,12 @@ navigation:
     submenu:
       - title: Photography
         url: /portfolio/photography/
+      - title: Podcast
+        url: /portfolio/audio/
       - title: Videography
         url: /portfolio/videography/
+      - title: Writings
+        url: /portfolio/writing/
   - title: Contact
     url: /contact/
 #    submenu:
