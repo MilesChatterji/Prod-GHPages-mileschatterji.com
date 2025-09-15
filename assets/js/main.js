@@ -24,6 +24,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize video carousel
     new VideoCarousel();
+    
+    // Initialize podcast RSS feed
+    initializePodcastFeed();
 });
 
 function initializeSite() {
@@ -697,6 +700,275 @@ const additionalStyles = `
         box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.2);
     }
 `;
+
+// Podcast RSS Feed Integration
+function initializePodcastFeed() {
+    // Only initialize on audio page
+    if (!window.location.pathname.includes('/portfolio/audio')) {
+        return;
+    }
+    
+    // Load podcast episodes when page loads
+    loadPodcastEpisodes();
+}
+
+async function loadPodcastEpisodes() {
+    const loadingElement = document.querySelector('.episodes-loading');
+    const errorElement = document.querySelector('.episodes-error');
+    const containerElement = document.querySelector('.episodes-container');
+    const episodesGrid = document.getElementById('episodes-grid');
+    
+    try {
+        // Show loading state
+        if (loadingElement) loadingElement.style.display = 'block';
+        if (errorElement) errorElement.style.display = 'none';
+        if (containerElement) containerElement.style.display = 'none';
+        
+        // Fetch RSS feed using CORS proxy
+        const rssUrl = 'https://feeds.acast.com/public/shows/68c5be286078db920133c8ac';
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`;
+        
+        const response = await fetch(proxyUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const rssText = await response.text();
+        const episodes = parseRSSFeed(rssText);
+        
+        // Display episodes
+        displayEpisodes(episodes);
+        
+        // Show episodes container
+        if (loadingElement) loadingElement.style.display = 'none';
+        if (containerElement) containerElement.style.display = 'block';
+        
+    } catch (error) {
+        console.error('Error loading podcast episodes:', error);
+        
+        // Show error state
+        if (loadingElement) loadingElement.style.display = 'none';
+        if (errorElement) errorElement.style.display = 'block';
+        if (containerElement) containerElement.style.display = 'none';
+    }
+}
+
+function parseRSSFeed(rssText) {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(rssText, 'text/xml');
+    
+    // Check for parsing errors
+    const parseError = xmlDoc.querySelector('parsererror');
+    if (parseError) {
+        throw new Error('Failed to parse RSS feed');
+    }
+    
+    const items = xmlDoc.querySelectorAll('item');
+    const episodes = [];
+    
+    items.forEach((item, index) => {
+        try {
+            const title = item.querySelector('title')?.textContent || `Episode ${index + 1}`;
+            const description = item.querySelector('description')?.textContent || '';
+            const pubDate = item.querySelector('pubDate')?.textContent || '';
+            const enclosure = item.querySelector('enclosure');
+            const audioUrl = enclosure?.getAttribute('url') || '';
+            const duration = item.querySelector('duration')?.textContent || '';
+            const imageUrl = item.querySelector('image')?.getAttribute('href') || 
+                           item.querySelector('itunes\\:image')?.getAttribute('href') || '';
+            
+            // Clean up description (remove HTML tags)
+            const cleanDescription = description.replace(/<[^>]*>/g, '').trim();
+            
+            // Format date
+            const formattedDate = formatDate(pubDate);
+            
+            // Format duration
+            const formattedDuration = formatDuration(duration);
+            
+            episodes.push({
+                title,
+                description: cleanDescription,
+                date: formattedDate,
+                duration: formattedDuration,
+                audioUrl,
+                imageUrl,
+                episodeUrl: item.querySelector('link')?.textContent || ''
+            });
+        } catch (error) {
+            console.warn('Error parsing episode:', error);
+        }
+    });
+    
+    return episodes;
+}
+
+function displayEpisodes(episodes) {
+    const episodesGrid = document.getElementById('episodes-grid');
+    if (!episodesGrid) return;
+    
+    // Clear existing content
+    episodesGrid.innerHTML = '';
+    
+    if (episodes.length === 0) {
+        episodesGrid.innerHTML = '<p>No episodes found.</p>';
+        return;
+    }
+    
+    episodes.forEach((episode, index) => {
+        const episodeCard = createEpisodeCard(episode, index);
+        episodesGrid.appendChild(episodeCard);
+    });
+}
+
+function createEpisodeCard(episode, index) {
+    const card = document.createElement('div');
+    card.className = 'episode-card';
+    
+    // Create episode image
+    const imageHtml = episode.imageUrl ? 
+        `<img src="${episode.imageUrl}" alt="${episode.title}" loading="lazy">` :
+        `<div class="default-image">🎧</div>`;
+    
+    // Create episode content
+    card.innerHTML = `
+        <div class="episode-image">
+            ${imageHtml}
+        </div>
+        <div class="episode-content">
+            <h3 class="episode-title">${episode.title}</h3>
+            <p class="episode-description">${episode.description}</p>
+            <div class="episode-meta">
+                <div class="episode-date">
+                    <span>📅</span>
+                    <span>${episode.date}</span>
+                </div>
+                <div class="episode-duration">
+                    <span>⏱️</span>
+                    <span>${episode.duration}</span>
+                </div>
+            </div>
+            <div class="episode-actions">
+                <button class="episode-play-btn" onclick="playEpisode(${index})" data-audio-url="${episode.audioUrl}">
+                    <span>▶️</span>
+                    <span>Play</span>
+                </button>
+                <button class="episode-download-btn" onclick="downloadEpisode('${episode.audioUrl}', '${episode.title}')">
+                    <span>⬇️</span>
+                </button>
+            </div>
+        </div>
+    `;
+    
+    return card;
+}
+
+function playEpisode(index) {
+    const playButton = event.target.closest('.episode-play-btn');
+    const audioUrl = playButton.dataset.audioUrl;
+    
+    if (!audioUrl) {
+        console.error('No audio URL found for episode');
+        return;
+    }
+    
+    // Create or update audio player
+    let audioPlayer = document.getElementById('episode-audio-player');
+    if (!audioPlayer) {
+        audioPlayer = document.createElement('div');
+        audioPlayer.id = 'episode-audio-player';
+        audioPlayer.className = 'audio-player';
+        audioPlayer.innerHTML = `
+            <audio controls>
+                <source src="" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <div class="audio-player-controls">
+                <div class="audio-player-info">
+                    <span id="current-episode-title">Now Playing</span>
+                </div>
+            </div>
+        `;
+        
+        // Insert after the episodes grid
+        const episodesGrid = document.getElementById('episodes-grid');
+        episodesGrid.parentNode.insertBefore(audioPlayer, episodesGrid.nextSibling);
+    }
+    
+    // Update audio source and title
+    const audio = audioPlayer.querySelector('audio');
+    const titleElement = document.getElementById('current-episode-title');
+    
+    audio.src = audioUrl;
+    titleElement.textContent = playButton.closest('.episode-card').querySelector('.episode-title').textContent;
+    
+    // Play the audio
+    audio.play().catch(error => {
+        console.error('Error playing audio:', error);
+        alert('Unable to play audio. Please try downloading the episode instead.');
+    });
+    
+    // Update button state
+    playButton.disabled = true;
+    playButton.innerHTML = '<span>⏸️</span><span>Playing...</span>';
+    
+    // Reset button when audio ends
+    audio.addEventListener('ended', () => {
+        playButton.disabled = false;
+        playButton.innerHTML = '<span>▶️</span><span>Play</span>';
+    });
+}
+
+function downloadEpisode(audioUrl, title) {
+    if (!audioUrl) {
+        console.error('No audio URL found for download');
+        return;
+    }
+    
+    // Create a temporary link to download the file
+    const link = document.createElement('a');
+    link.href = audioUrl;
+    link.download = `${title}.mp3`;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'Unknown date';
+    
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    } catch (error) {
+        return 'Unknown date';
+    }
+}
+
+function formatDuration(duration) {
+    if (!duration) return 'Unknown duration';
+    
+    // Handle different duration formats
+    if (duration.includes(':')) {
+        return duration; // Already formatted
+    }
+    
+    const seconds = parseInt(duration);
+    if (isNaN(seconds)) return 'Unknown duration';
+    
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+// Make loadPodcastEpisodes globally available for retry button
+window.loadPodcastEpisodes = loadPodcastEpisodes;
 
 // Inject additional styles
 const styleSheet = document.createElement('style');

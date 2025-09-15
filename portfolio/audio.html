@@ -3,3 +3,40 @@ layout: page
 title: Podcast Audio
 subtitle: Explore my thoughts through recorded audio ramblings
 ---
+
+<div class="podcast-section">
+    <div class="podcast-header">
+        <h2>FML Podcast</h2>
+        <p>A monologue-driven series that dives into the raw, unfiltered moments that shape everyday existence. Each episode opens with a personal reflection—an honest, sometimes gritty narrative that captures the highs, lows, and paradoxes of modern life.</p>
+    </div>
+    
+    <div class="podcast-episodes">
+        <div class="episodes-loading">
+            <div class="loading-spinner"></div>
+            <p>Loading episodes...</p>
+        </div>
+        
+        <div class="episodes-error" style="display: none;">
+            <p>Unable to load episodes. Please try again later.</p>
+            <button class="btn" onclick="loadPodcastEpisodes()">Retry</button>
+        </div>
+        
+        <div class="episodes-container" style="display: none;">
+            <div class="episodes-grid" id="episodes-grid">
+                <!-- Episodes will be dynamically loaded here -->
+            </div>
+        </div>
+    </div>
+    
+    <div class="podcast-links">
+        <h3>Listen on your favorite platform</h3>
+        <div class="platform-links">
+            <a href="https://feeds.acast.com/public/shows/68c5be286078db920133c8ac" class="btn btn-secondary" target="_blank">
+                <i class="icon-rss"></i> RSS Feed
+            </a>
+            <a href="https://shows.acast.com/fml" class="btn btn-secondary" target="_blank">
+                <i class="icon-acast"></i> Acast
+            </a>
+        </div>
+    </div>
+</div>
