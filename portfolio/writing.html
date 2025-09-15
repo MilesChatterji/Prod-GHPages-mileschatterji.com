@@ -3,3 +3,66 @@ layout: page
 title: Writing and Blogging
 subtitle: Explore my thoughts through my Medium and Substack Platforms
 ---
+
+<div class="writing-section">
+    <div class="writing-header">
+        <h2>Recent Articles</h2>
+        <p>Thoughts, insights, and stories from my journey. Each article represents a moment of reflection, a lesson learned, or a perspective worth sharing.</p>
+    </div>
+    
+    <div class="articles-container">
+        <div class="articles-loading">
+            <div class="loading-spinner"></div>
+            <p>Loading articles...</p>
+        </div>
+        
+        <div class="articles-error" style="display: none;">
+            <p>Unable to load articles. Please try again later.</p>
+            <button class="btn" onclick="loadMediumArticles()">Retry</button>
+        </div>
+        
+        <div class="articles-grid" id="articles-grid" style="display: none;">
+            <!-- Articles will be dynamically loaded here -->
+        </div>
+    </div>
+    
+    <div class="writing-platforms">
+        <h3>Follow my writing journey</h3>
+        <div class="platform-links">
+            <a href="https://medium.com/@mileschatterji" class="btn btn-secondary" target="_blank">
+                <i class="icon-medium"></i> Medium
+            </a>
+            <a href="https://mileschatterji.substack.com" class="btn btn-secondary" target="_blank">
+                <i class="icon-substack"></i> Substack
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Article Configuration -->
+<!-- 
+To add your Medium articles, simply replace the URLs below with your actual Medium article URLs.
+The system will automatically fetch the title, description, image, and metadata from each article.
+
+Example:
+{
+    "url": "https://medium.com/@mileschatterji/your-article-title",
+    "tags": ["technology", "life", "personal"]
+}
+
+You can add as many articles as you want. The system will display them in a responsive grid.
+-->
+<script type="application/json" id="medium-articles-config">
+{
+    "articles": [
+        {
+            "url": "https://mileschatterji.medium.com/starting-is-hard-3514ac350d42?source=friends_link&sk=cb4625d23eac3435105e9a8e7cc70b4a",
+            "tags": ["technology", "life"]
+        },
+        {
+            "url": "https://medium.com/@mileschatterji/example-article-2", 
+            "tags": ["writing", "personal"]
+        }
+    ]
+}
+</script>

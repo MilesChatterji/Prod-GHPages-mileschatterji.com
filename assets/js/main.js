@@ -27,6 +27,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize podcast RSS feed
     initializePodcastFeed();
+    
+    // Initialize Medium articles
+    initializeMediumArticles();
 });
 
 function initializeSite() {
@@ -966,6 +969,211 @@ function formatDuration(duration) {
     
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 }
+
+// Medium Articles Integration
+function initializeMediumArticles() {
+    // Only initialize on writing page
+    if (!window.location.pathname.includes('/portfolio/writing')) {
+        return;
+    }
+    
+    // Load articles when page loads
+    loadMediumArticles();
+}
+
+async function loadMediumArticles() {
+    const loadingElement = document.querySelector('.articles-loading');
+    const errorElement = document.querySelector('.articles-error');
+    const articlesGrid = document.getElementById('articles-grid');
+    
+    try {
+        // Show loading state
+        if (loadingElement) loadingElement.style.display = 'block';
+        if (errorElement) errorElement.style.display = 'none';
+        if (articlesGrid) articlesGrid.style.display = 'none';
+        
+        // Get article configuration
+        const configScript = document.getElementById('medium-articles-config');
+        if (!configScript) {
+            throw new Error('Article configuration not found');
+        }
+        
+        const config = JSON.parse(configScript.textContent);
+        const articles = config.articles || [];
+        
+        if (articles.length === 0) {
+            throw new Error('No articles configured');
+        }
+        
+        // Fetch article previews
+        const articlePreviews = await Promise.all(
+            articles.map(async (article, index) => {
+                try {
+                    const preview = await fetchArticlePreview(article.url);
+                    return {
+                        ...article,
+                        ...preview,
+                        index
+                    };
+                } catch (error) {
+                    console.warn(`Failed to fetch preview for ${article.url}:`, error);
+                    return {
+                        ...article,
+                        index,
+                        error: true
+                    };
+                }
+            })
+        );
+        
+        // Display articles
+        displayArticles(articlePreviews);
+        
+        // Show articles container
+        if (loadingElement) loadingElement.style.display = 'none';
+        if (articlesGrid) articlesGrid.style.display = 'grid';
+        
+    } catch (error) {
+        console.error('Error loading articles:', error);
+        
+        // Show error state
+        if (loadingElement) loadingElement.style.display = 'none';
+        if (errorElement) errorElement.style.display = 'block';
+        if (articlesGrid) articlesGrid.style.display = 'none';
+    }
+}
+
+async function fetchArticlePreview(url) {
+    try {
+        // Use a link preview service to get article metadata
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+        const response = await fetch(proxyUrl);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Extract metadata from HTML
+        const title = doc.querySelector('title')?.textContent || 
+                     doc.querySelector('meta[property="og:title"]')?.getAttribute('content') || 
+                     'Untitled Article';
+        
+        const description = doc.querySelector('meta[property="og:description"]')?.getAttribute('content') || 
+                           doc.querySelector('meta[name="description"]')?.getAttribute('content') || 
+                           doc.querySelector('p')?.textContent?.substring(0, 200) || 
+                           'No description available';
+        
+        const imageUrl = doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || 
+                        doc.querySelector('meta[property="twitter:image"]')?.getAttribute('content') || 
+                        null;
+        
+        const publishedDate = doc.querySelector('meta[property="article:published_time"]')?.getAttribute('content') || 
+                             doc.querySelector('time[datetime]')?.getAttribute('datetime') || 
+                             null;
+        
+        const readTime = doc.querySelector('meta[name="twitter:label1"]')?.getAttribute('content') || 
+                        doc.querySelector('[data-testid="readingTime"]')?.textContent || 
+                        null;
+        
+        return {
+            title: cleanText(title),
+            description: cleanText(description),
+            imageUrl,
+            publishedDate: publishedDate ? formatDate(publishedDate) : null,
+            readTime: readTime ? cleanText(readTime) : null
+        };
+        
+    } catch (error) {
+        console.error('Error fetching article preview:', error);
+        throw error;
+    }
+}
+
+function displayArticles(articles) {
+    const articlesGrid = document.getElementById('articles-grid');
+    if (!articlesGrid) return;
+    
+    // Clear existing content
+    articlesGrid.innerHTML = '';
+    
+    if (articles.length === 0) {
+        articlesGrid.innerHTML = '<p>No articles found.</p>';
+        return;
+    }
+    
+    articles.forEach((article, index) => {
+        const articleCard = createArticleCard(article, index);
+        articlesGrid.appendChild(articleCard);
+    });
+}
+
+function createArticleCard(article, index) {
+    const card = document.createElement('div');
+    card.className = `article-card ${article.error ? 'error' : ''}`;
+    
+    // Create article image
+    const imageHtml = article.imageUrl ? 
+        `<img src="${article.imageUrl}" alt="${article.title}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\"default-image\\">📝</div>'">` :
+        `<div class="default-image">📝</div>`;
+    
+    // Create tags HTML
+    const tagsHtml = article.tags && article.tags.length > 0 ? 
+        `<div class="article-tags">${article.tags.map(tag => `<span class="article-tag">${tag}</span>`).join('')}</div>` : '';
+    
+    // Create meta information
+    const metaHtml = `
+        <div class="article-meta">
+            <div class="article-date">
+                <span>📅</span>
+                <span>${article.publishedDate || article.date || 'Unknown date'}</span>
+            </div>
+            <div class="article-read-time">
+                <span>⏱️</span>
+                <span>${article.readTime || 'Unknown'}</span>
+            </div>
+        </div>
+    `;
+    
+    // Create article content
+    card.innerHTML = `
+        <div class="article-image">
+            ${imageHtml}
+        </div>
+        <div class="article-content">
+            <h3 class="article-title">${article.title}</h3>
+            <p class="article-description">${article.description}</p>
+            ${tagsHtml}
+            ${metaHtml}
+            <div class="article-actions">
+                <a href="${article.url}" class="article-read-btn" target="_blank" rel="noopener">
+                    <span>📖</span>
+                    <span>Read Article</span>
+                </a>
+                <a href="${article.url}" class="article-external-btn" target="_blank" rel="noopener">
+                    <span>🔗</span>
+                </a>
+            </div>
+        </div>
+    `;
+    
+    return card;
+}
+
+function cleanText(text) {
+    if (!text) return '';
+    return text
+        .replace(/<[^>]*>/g, '') // Remove HTML tags
+        .replace(/&[^;]+;/g, ' ') // Remove HTML entities
+        .replace(/\s+/g, ' ') // Normalize whitespace
+        .trim();
+}
+
+// Make loadMediumArticles globally available for retry button
+window.loadMediumArticles = loadMediumArticles;
 
 // Make loadPodcastEpisodes globally available for retry button
 window.loadPodcastEpisodes = loadPodcastEpisodes;
