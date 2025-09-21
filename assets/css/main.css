@@ -831,104 +831,43 @@ a:hover {
     100% { transform: rotate(360deg); }
 }
 
-/* Gallery Modal - Ultra Simple Implementation */
-.gallery-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.95);
-    z-index: 10000;
-    display: none;
+/* PhotoSwipe Customization */
+.pswp__bg {
+    background: rgba(0, 0, 0, 0.95) !important;
 }
 
-.gallery-modal.active {
-    display: block;
+.pswp__button {
+    background: rgba(0, 0, 0, 0.8) !important;
+    color: white !important;
+    border-radius: 50% !important;
+    transition: all 0.3s ease !important;
 }
 
-.gallery-modal-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-    max-width: 90vw;
-    max-height: 90vh;
+.pswp__button:hover {
+    background: rgba(255, 140, 0, 0.9) !important;
+    transform: scale(1.1) !important;
 }
 
-.gallery-modal-image {
-    display: block;
-    max-width: 100%;
-    max-height: calc(90vh - 60px);
-    width: auto;
-    height: auto;
-    margin: 0;
+.pswp__button--close {
+    background: rgba(0, 0, 0, 0.8) !important;
 }
 
-.gallery-modal-caption {
-    padding: 15px;
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    text-align: center;
-    font-size: 14px;
-    border-top: 1px solid var(--border-color);
-    margin: 0;
+.pswp__button--arrow--left,
+.pswp__button--arrow--right {
+    background: rgba(0, 0, 0, 0.8) !important;
 }
 
-.gallery-modal-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10001;
+.pswp__caption {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-top: 1px solid var(--border-color) !important;
 }
 
-.gallery-modal-close:hover {
-    background: rgba(255, 140, 0, 0.9);
-}
-
-.gallery-modal-nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    font-size: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10001;
-}
-
-.gallery-modal-nav:hover {
-    background: rgba(255, 140, 0, 0.9);
-}
-
-.gallery-modal-prev {
-    left: 20px;
-}
-
-.gallery-modal-next {
-    right: 20px;
+.pswp__counter {
+    color: white !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+    border-radius: 20px !important;
+    padding: 5px 15px !important;
 }
 
 /* Responsive Design for Gallery */
@@ -946,40 +885,15 @@ a:hover {
         padding: 1rem;
     }
     
-    .gallery-modal-content {
-        max-width: 95vw;
-        max-height: 95vh;
+    /* PhotoSwipe responsive adjustments */
+    .pswp__button {
+        width: 44px !important;
+        height: 44px !important;
     }
     
-    .gallery-modal-image {
-        max-height: calc(95vh - 60px);
-    }
-    
-    .gallery-modal-caption {
-        padding: 12px;
-        font-size: 13px;
-    }
-    
-    .gallery-modal-close {
-        width: 36px;
-        height: 36px;
-        font-size: 16px;
-        top: 8px;
-        right: 8px;
-    }
-    
-    .gallery-modal-nav {
-        width: 44px;
-        height: 44px;
-        font-size: 18px;
-    }
-    
-    .gallery-modal-prev {
-        left: 15px;
-    }
-    
-    .gallery-modal-next {
-        right: 15px;
+    .pswp__button--close {
+        width: 36px !important;
+        height: 36px !important;
     }
 }
 
@@ -1005,40 +919,15 @@ a:hover {
         font-size: 1rem;
     }
     
-    .gallery-modal-content {
-        max-width: 98vw;
-        max-height: 98vh;
+    /* PhotoSwipe mobile adjustments */
+    .pswp__button {
+        width: 40px !important;
+        height: 40px !important;
     }
     
-    .gallery-modal-image {
-        max-height: calc(98vh - 60px);
-    }
-    
-    .gallery-modal-caption {
-        padding: 10px;
-        font-size: 12px;
-    }
-    
-    .gallery-modal-close {
-        width: 32px;
-        height: 32px;
-        font-size: 14px;
-        top: 6px;
-        right: 6px;
-    }
-    
-    .gallery-modal-nav {
-        width: 40px;
-        height: 40px;
-        font-size: 16px;
-    }
-    
-    .gallery-modal-prev {
-        left: 10px;
-    }
-    
-    .gallery-modal-next {
-        right: 10px;
+    .pswp__button--close {
+        width: 32px !important;
+        height: 32px !important;
     }
 }
 

@@ -3,9 +3,14 @@ layout: page
 title: Photo Gallery
 subtitle: A curated collection of my photography work
 ---
+
 <h2>About the Collection</h2>
 <p>This collection represents my journey through street photography and urban landscapes, focusing on the interplay between architecture, light, and human presence in urban environments.</p>
 
+<div class="gallery-header">
+    <h2>Photo Gallery</h2>
+    <p>Click on any photo to view it in full size. Use the navigation arrows or swipe to browse through the gallery.</p>
+</div>
 
 <div class="gallery-container">
     <div class="gallery-grid" id="gallery-grid">
@@ -17,21 +22,52 @@ subtitle: A curated collection of my photography work
     </div>
 </div>
 
-<!-- Gallery Modal -->
-<div class="gallery-modal" id="gallery-modal">
-    <div class="gallery-modal-content">
-        <button class="gallery-modal-close" id="gallery-modal-close">&times;</button>
-        <button class="gallery-modal-nav gallery-modal-prev" id="gallery-modal-prev">‹</button>
-        <button class="gallery-modal-nav gallery-modal-next" id="gallery-modal-next">›</button>
-        <img class="gallery-modal-image" id="gallery-modal-image" alt="Gallery image">
-        <div class="gallery-modal-caption" id="gallery-modal-caption"></div>
+<!-- PhotoSwipe Modal -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="pswp__bg"></div>
+    <div class="pswp__scroll-wrap">
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
     </div>
 </div>
 
+<!-- PhotoSwipe CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.css">
+
+<!-- PhotoSwipe JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe-lightbox.umd.min.js"></script>
+
 <script>
-// Simple Gallery Implementation
+// PhotoSwipe Gallery Implementation
 let galleryPhotos = [];
-let currentIndex = 0;
 
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', function() {
@@ -39,27 +75,99 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initGallery() {
-    // Define photos
+    // Define photos with PhotoSwipe format
     galleryPhotos = [
-        { src: '/assets/images/2.jpg', caption: 'Photography Work', alt: 'Creative photography' },
-        { src: '/assets/images/3.jpg', caption: 'Artistic Shot', alt: 'Artistic photography' },
-        { src: '/assets/images/4.jpg', caption: 'Portrait Work', alt: 'Portrait photography' },
-        { src: '/assets/images/5.jpg', caption: 'Landscape View', alt: 'Landscape photography' },
-        { src: '/assets/images/6.jpg', caption: 'Creative Composition', alt: 'Creative photography' },
-        { src: '/assets/images/7.jpg', caption: 'Artistic Vision', alt: 'Artistic photography' },
-        { src: '/assets/images/8.jpg', caption: 'Photography Series', alt: 'Photography work' },
-        { src: '/assets/images/9.jpg', caption: 'Creative Shot', alt: 'Creative photography' },
-        { src: '/assets/images/10.jpg', caption: 'Artistic Work', alt: 'Artistic photography' },
-        { src: '/assets/images/11.jpg', caption: 'Portrait Series', alt: 'Portrait photography' },
-        { src: '/assets/images/12.jpg', caption: 'Landscape Photography', alt: 'Landscape work' },
-        { src: '/assets/images/DSCF4375.jpg', caption: 'Professional Photography', alt: 'Professional work' }
+        { 
+            src: '/assets/images/2.jpg', 
+            width: 1920, 
+            height: 1080, 
+            alt: 'Creative photography',
+            title: 'Photography Work'
+        },
+        { 
+            src: '/assets/images/3.jpg', 
+            width: 1920, 
+            height: 1080, 
+            alt: 'Artistic photography',
+            title: 'Artistic Shot'
+        },
+        { 
+            src: '/assets/images/4.jpg', 
+            width: 1920, 
+            height: 1080, 
+            alt: 'Portrait photography',
+            title: 'Portrait Work'
+        },
+        { 
+            src: '/assets/images/5.jpg', 
+            width: 1920, 
+            height: 1080, 
+            alt: 'Landscape photography',
+            title: 'Landscape View'
+        },
+        { 
+            src: '/assets/images/6.jpg', 
+            width: 1920, 
+            height: 1080, 
+            alt: 'Creative photography',
+            title: 'Creative Composition'
+        },
+        { 
+            src: '/assets/images/7.jpg', 
+            width: 1920, 
+            height: 1080, 
+            alt: 'Artistic photography',
+            title: 'Artistic Vision'
+        },
+        { 
+            src: '/assets/images/8.jpg', 
+            width: 1920, 
+            height: 1080, 
+            alt: 'Photography work',
+            title: 'Photography Series'
+        },
+        { 
+            src: '/assets/images/9.jpg', 
+            width: 1920, 
+            height: 1080, 
+            alt: 'Creative photography',
+            title: 'Creative Shot'
+        },
+        { 
+            src: '/assets/images/10.jpg', 
+            width: 1920, 
+            height: 1080, 
+            alt: 'Artistic photography',
+            title: 'Artistic Work'
+        },
+        { 
+            src: '/assets/images/11.jpg', 
+            width: 1920, 
+            height: 1080, 
+            alt: 'Portrait photography',
+            title: 'Portrait Series'
+        },
+        { 
+            src: '/assets/images/12.jpg', 
+            width: 1920, 
+            height: 1080, 
+            alt: 'Landscape work',
+            title: 'Landscape Photography'
+        },
+        { 
+            src: '/assets/images/DSCF4375.jpg', 
+            width: 1920, 
+            height: 1080, 
+            alt: 'Professional work',
+            title: 'Professional Photography'
+        }
     ];
 
     // Create gallery
     createGallery();
     
-    // Setup modal
-    setupModal();
+    // Initialize PhotoSwipe
+    initPhotoSwipe();
 }
 
 function createGallery() {
@@ -71,7 +179,7 @@ function createGallery() {
         item.className = 'gallery-item';
         item.innerHTML = `
             <div class="gallery-image-container">
-                <img src="${photo.src}" alt="${photo.alt}" class="gallery-image" loading="lazy">
+                <img src="${photo.src}" alt="${photo.alt}" class="gallery-image" loading="lazy" data-pswp-src="${photo.src}" data-pswp-width="${photo.width}" data-pswp-height="${photo.height}" data-pswp-title="${photo.title}">
                 <div class="gallery-overlay">
                     <div class="gallery-overlay-content">
                         <span class="gallery-icon">🔍</span>
@@ -80,87 +188,57 @@ function createGallery() {
                 </div>
             </div>
             <div class="gallery-caption">
-                <p>${photo.caption}</p>
+                <p>${photo.title}</p>
             </div>
         `;
         
-        item.addEventListener('click', () => openModal(index));
         grid.appendChild(item);
     });
 }
 
-function setupModal() {
-    const modal = document.getElementById('gallery-modal');
-    const closeBtn = document.getElementById('gallery-modal-close');
-    const prevBtn = document.getElementById('gallery-modal-prev');
-    const nextBtn = document.getElementById('gallery-modal-next');
-
-    // Close modal
-    closeBtn.addEventListener('click', closeModal);
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) closeModal();
+function initPhotoSwipe() {
+    // Initialize PhotoSwipe Lightbox
+    const lightbox = new PhotoSwipeLightbox({
+        gallery: '#gallery-grid',
+        children: '.gallery-image',
+        pswpModule: PhotoSwipe,
+        showHideAnimationType: 'zoom',
+        bgOpacity: 0.95,
+        spacing: 0.1,
+        allowPanToNext: false,
+        maxZoomLevel: 3,
+        minZoomLevel: 1,
+        secondaryZoomLevel: 2,
+        wheelToZoom: true,
+        pinchToClose: true,
+        closeOnVerticalDrag: true,
+        closeTitle: 'Close (Esc)',
+        zoomTitle: 'Zoom in/out',
+        arrowPrevTitle: 'Previous (arrow left)',
+        arrowNextTitle: 'Next (arrow right)',
+        errorMsg: 'The image could not be loaded.',
+        preloadFirstSlide: true,
+        preload: [1, 3],
+        showHideAnimationType: 'zoom',
+        bgOpacity: 0.95,
+        spacing: 0.1,
+        allowPanToNext: false,
+        maxZoomLevel: 3,
+        minZoomLevel: 1,
+        secondaryZoomLevel: 2,
+        wheelToZoom: true,
+        pinchToClose: true,
+        closeOnVerticalDrag: true,
+        closeTitle: 'Close (Esc)',
+        zoomTitle: 'Zoom in/out',
+        arrowPrevTitle: 'Previous (arrow left)',
+        arrowNextTitle: 'Next (arrow right)',
+        errorMsg: 'The image could not be loaded.',
+        preloadFirstSlide: true,
+        preload: [1, 3]
     });
 
-    // Navigation
-    prevBtn.addEventListener('click', previousPhoto);
-    nextBtn.addEventListener('click', nextPhoto);
-
-    // Keyboard
-    document.addEventListener('keydown', function(e) {
-        if (!modal.classList.contains('active')) return;
-        
-        if (e.key === 'Escape') closeModal();
-        if (e.key === 'ArrowLeft') previousPhoto();
-        if (e.key === 'ArrowRight') nextPhoto();
-    });
-}
-
-function openModal(index) {
-    currentIndex = index;
-    const modal = document.getElementById('gallery-modal');
-    const img = document.getElementById('gallery-modal-image');
-    const caption = document.getElementById('gallery-modal-caption');
-    const prevBtn = document.getElementById('gallery-modal-prev');
-    const nextBtn = document.getElementById('gallery-modal-next');
-
-    const photo = galleryPhotos[index];
-    img.src = photo.src;
-    img.alt = photo.alt;
-    caption.textContent = photo.caption;
-
-    // Show/hide navigation
-    prevBtn.style.display = galleryPhotos.length > 1 ? 'flex' : 'none';
-    nextBtn.style.display = galleryPhotos.length > 1 ? 'flex' : 'none';
-
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeModal() {
-    const modal = document.getElementById('gallery-modal');
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
-}
-
-function previousPhoto() {
-    if (galleryPhotos.length <= 1) return;
-    currentIndex = (currentIndex - 1 + galleryPhotos.length) % galleryPhotos.length;
-    updateModalPhoto();
-}
-
-function nextPhoto() {
-    if (galleryPhotos.length <= 1) return;
-    currentIndex = (currentIndex + 1) % galleryPhotos.length;
-    updateModalPhoto();
-}
-
-function updateModalPhoto() {
-    const img = document.getElementById('gallery-modal-image');
-    const caption = document.getElementById('gallery-modal-caption');
-    const photo = galleryPhotos[currentIndex];
-    
-    img.src = photo.src;
-    img.alt = photo.alt;
-    caption.textContent = photo.caption;
+    // Initialize
+    lightbox.init();
 }
 </script>
