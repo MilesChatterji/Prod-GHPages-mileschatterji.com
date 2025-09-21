@@ -426,8 +426,9 @@ class PhotoGallery {
         const lightboxImg = new Image();
         lightboxImg.onload = () => {
             // Scale image for optimal viewing while maintaining aspect ratio
+            // Account for counter space and modal padding
             const maxWidth = window.innerWidth * 0.9;
-            const maxHeight = window.innerHeight * 0.8;
+            const maxHeight = window.innerHeight * 0.75; // Reduced to account for counter and padding
             
             let { width, height } = lightboxImg;
             
@@ -601,7 +602,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const img = new Image();
                         img.onload = () => {
                             const maxWidth = window.innerWidth * 0.9;
-                            const maxHeight = window.innerHeight * 0.8;
+                            const maxHeight = window.innerHeight * 0.75; // Reduced to account for counter and padding
                             
                             let { width, height } = img;
                             
