@@ -48,14 +48,14 @@ exclude:
 # Navigation structure
 navigation:
   - title: Biography
-    url: #
+    #url:
     submenu:
       - title: Professional History
         url: /biography/experience/
       - title: Creative History
         url: /biography/creative/
   - title: Portfolio
-    url: #
+    #url:
     submenu:
       - title: Photography
         url: /portfolio/gallery/
