@@ -1,0 +1,141 @@
+---
+layout: page
+title: Photo Gallery
+subtitle: A curated collection of my photography work
+---
+
+<div class="gallery-header">
+    <h2>Photo Gallery</h2>
+    <p>Click on any photo to view it in full size. Use the close button (×) to return to the gallery.</p>
+</div>
+
+<div class="gallery-container">
+    <div class="gallery-grid" id="gallery-grid">
+        <!-- Photos will be dynamically loaded here -->
+        <div class="gallery-loading">
+            <div class="loading-spinner"></div>
+            <p>Loading photos...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Photo Modal -->
+<div class="photo-modal" id="photo-modal">
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <div class="modal-content">
+        <button class="modal-close" id="modal-close" aria-label="Close photo">&times;</button>
+        <img class="modal-image" id="modal-image" alt="Full size photo">
+        <div class="modal-caption" id="modal-caption"></div>
+    </div>
+</div>
+
+<script>
+// Gallery photos configuration
+const galleryPhotos = [
+    // Add your photos here - they will be automatically loaded from /assets/images/gallery/
+    // Example format:
+    // { src: '/assets/images/gallery/photo1.jpg', caption: 'Beautiful landscape', alt: 'Mountain view' },
+    // { src: '/assets/images/gallery/photo2.jpg', caption: 'Urban photography', alt: 'City street' },
+];
+
+// Initialize gallery when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    initializeGallery();
+});
+
+function initializeGallery() {
+    const galleryGrid = document.getElementById('gallery-grid');
+    const photoModal = document.getElementById('photo-modal');
+    const modalImage = document.getElementById('modal-image');
+    const modalCaption = document.getElementById('modal-caption');
+    const modalClose = document.getElementById('modal-close');
+    const modalOverlay = document.getElementById('modal-overlay');
+
+    // Load photos from the gallery directory
+    loadGalleryPhotos();
+
+    // Add event listeners for modal
+    modalClose.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', closeModal);
+    
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && photoModal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+}
+
+function loadGalleryPhotos() {
+    const galleryGrid = document.getElementById('gallery-grid');
+    
+    // For now, we'll use the existing photos from the images directory
+    // In a real implementation, you would scan the /assets/images/gallery/ directory
+    const existingPhotos = [
+        { src: '/assets/images/2.jpg', caption: 'Photography Work', alt: 'Creative photography' },
+        { src: '/assets/images/3.jpg', caption: 'Artistic Shot', alt: 'Artistic photography' },
+        { src: '/assets/images/4.jpg', caption: 'Portrait Work', alt: 'Portrait photography' },
+        { src: '/assets/images/5.jpg', caption: 'Landscape View', alt: 'Landscape photography' },
+        { src: '/assets/images/6.jpg', caption: 'Creative Composition', alt: 'Creative photography' },
+        { src: '/assets/images/7.jpg', caption: 'Artistic Vision', alt: 'Artistic photography' },
+        { src: '/assets/images/8.jpg', caption: 'Photography Series', alt: 'Photography work' },
+        { src: '/assets/images/9.jpg', caption: 'Creative Shot', alt: 'Creative photography' },
+        { src: '/assets/images/10.jpg', caption: 'Artistic Work', alt: 'Artistic photography' },
+        { src: '/assets/images/11.jpg', caption: 'Portrait Series', alt: 'Portrait photography' },
+        { src: '/assets/images/12.jpg', caption: 'Landscape Photography', alt: 'Landscape work' },
+        { src: '/assets/images/DSCF4375.jpg', caption: 'Professional Photography', alt: 'Professional work' }
+    ];
+
+    // Clear loading state
+    galleryGrid.innerHTML = '';
+
+    // Create gallery items
+    existingPhotos.forEach((photo, index) => {
+        const galleryItem = createGalleryItem(photo, index);
+        galleryGrid.appendChild(galleryItem);
+    });
+}
+
+function createGalleryItem(photo, index) {
+    const item = document.createElement('div');
+    item.className = 'gallery-item';
+    item.innerHTML = `
+        <div class="gallery-image-container">
+            <img src="${photo.src}" alt="${photo.alt}" class="gallery-image" loading="lazy">
+            <div class="gallery-overlay">
+                <div class="gallery-overlay-content">
+                    <span class="gallery-icon">🔍</span>
+                    <span class="gallery-text">View Full Size</span>
+                </div>
+            </div>
+        </div>
+        <div class="gallery-caption">
+            <p>${photo.caption}</p>
+        </div>
+    `;
+
+    // Add click event to open modal
+    item.addEventListener('click', () => openModal(photo));
+    
+    return item;
+}
+
+function openModal(photo) {
+    const photoModal = document.getElementById('photo-modal');
+    const modalImage = document.getElementById('modal-image');
+    const modalCaption = document.getElementById('modal-caption');
+
+    modalImage.src = photo.src;
+    modalImage.alt = photo.alt;
+    modalCaption.textContent = photo.caption;
+
+    photoModal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+function closeModal() {
+    const photoModal = document.getElementById('photo-modal');
+    photoModal.classList.remove('active');
+    document.body.style.overflow = ''; // Restore scrolling
+}
+</script>
