@@ -831,25 +831,18 @@ a:hover {
     100% { transform: rotate(360deg); }
 }
 
-/* Photo Modal */
+/* Photo Modal - Complete Rewrite */
 .photo-modal {
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
     width: 100vw;
     height: 100vh;
     z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     opacity: 0;
     visibility: hidden;
-    transition: all var(--transition-speed) ease;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
     pointer-events: none;
-    margin: 0;
-    padding: 0;
 }
 
 .photo-modal.active {
@@ -866,54 +859,53 @@ a:hover {
     height: 100%;
     background: rgba(0, 0, 0, 0.95);
     backdrop-filter: blur(8px);
-    z-index: 1;
 }
 
 .modal-content {
-    position: relative;
-    max-width: 95vw;
-    max-height: 95vh;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 90vw;
+    height: 90vh;
+    max-width: 1200px;
+    max-height: 800px;
     background: var(--bg-secondary);
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8);
-    transform: scale(0.8);
-    transition: transform var(--transition-speed) ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    z-index: 2;
+    transition: transform 0.3s ease;
+    display: grid;
+    grid-template-rows: 1fr auto;
     border: 2px solid rgba(255, 255, 255, 0.1);
-    margin: auto;
 }
 
 .photo-modal.active .modal-content {
-    transform: scale(1);
+    transform: translate(-50%, -50%) scale(1);
 }
 
 .modal-close {
     position: absolute;
     top: 1rem;
     right: 1rem;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
     color: white;
     border: none;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     font-size: 1.5rem;
     cursor: pointer;
-    z-index: 1001;
+    z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all var(--transition-speed) ease;
+    transition: all 0.3s ease;
     backdrop-filter: blur(10px);
 }
 
 .modal-close:hover {
-    background: rgba(255, 140, 0, 0.8);
+    background: rgba(255, 140, 0, 0.9);
     transform: scale(1.1);
 }
 
@@ -921,7 +913,7 @@ a:hover {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
     color: white;
     border: none;
     border-radius: 50%;
@@ -929,17 +921,17 @@ a:hover {
     height: 50px;
     font-size: 1.8rem;
     cursor: pointer;
-    z-index: 1001;
+    z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all var(--transition-speed) ease;
+    transition: all 0.3s ease;
     backdrop-filter: blur(10px);
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 .modal-nav:hover {
-    background: rgba(255, 140, 0, 0.8);
+    background: rgba(255, 140, 0, 0.9);
     transform: translateY(-50%) scale(1.1);
     opacity: 1;
 }
@@ -957,17 +949,19 @@ a:hover {
     align-items: center;
     justify-content: center;
     width: 100%;
-    flex: 1;
-    min-height: 0;
+    height: 100%;
+    padding: 2rem;
+    box-sizing: border-box;
 }
 
 .modal-image {
     max-width: 100%;
-    max-height: calc(95vh - 80px); /* Account for caption space */
+    max-height: 100%;
     width: auto;
     height: auto;
     object-fit: contain;
     display: block;
+    border-radius: 8px;
 }
 
 .modal-caption {
@@ -978,8 +972,6 @@ a:hover {
     font-weight: 500;
     text-align: center;
     border-top: 1px solid var(--border-color);
-    flex-shrink: 0;
-    width: 100%;
 }
 
 /* Responsive Design for Gallery */
@@ -998,16 +990,14 @@ a:hover {
     }
     
     .modal-content {
-        max-width: 98vw;
-        max-height: 98vh;
-        margin: 0.5rem;
+        width: 95vw;
+        height: 95vh;
+        max-width: none;
+        max-height: none;
     }
     
-    .modal-image {
-        max-height: calc(98vh - 60px); /* Account for smaller caption on mobile */
-        max-width: 100%;
-        width: auto;
-        height: auto;
+    .modal-image-container {
+        padding: 1rem;
     }
     
     .modal-caption {
@@ -1016,25 +1006,25 @@ a:hover {
     }
     
     .modal-close {
-        width: 35px;
-        height: 35px;
-        font-size: 1.2rem;
-        top: 0.5rem;
-        right: 0.5rem;
+        width: 40px;
+        height: 40px;
+        font-size: 1.3rem;
+        top: 0.75rem;
+        right: 0.75rem;
     }
     
     .modal-nav {
-        width: 40px;
-        height: 40px;
-        font-size: 1.4rem;
+        width: 44px;
+        height: 44px;
+        font-size: 1.6rem;
     }
     
     .modal-prev {
-        left: 0.5rem;
+        left: 0.75rem;
     }
     
     .modal-next {
-        right: 0.5rem;
+        right: 0.75rem;
     }
 }
 
@@ -1058,6 +1048,37 @@ a:hover {
     
     .gallery-header p {
         font-size: 1rem;
+    }
+    
+    .modal-content {
+        width: 98vw;
+        height: 98vh;
+    }
+    
+    .modal-image-container {
+        padding: 0.75rem;
+    }
+    
+    .modal-close {
+        width: 36px;
+        height: 36px;
+        font-size: 1.2rem;
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+    
+    .modal-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 1.4rem;
+    }
+    
+    .modal-prev {
+        left: 0.5rem;
+    }
+    
+    .modal-next {
+        right: 0.5rem;
     }
 }
 
