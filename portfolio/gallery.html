@@ -17,73 +17,30 @@ subtitle: A curated collection of my photography work
     </div>
 </div>
 
-<!-- Photo Modal -->
-<div class="photo-modal" id="photo-modal">
-    <div class="modal-overlay" id="modal-overlay"></div>
-    <div class="modal-content">
-        <button class="modal-close" id="modal-close" aria-label="Close photo">&times;</button>
-        <button class="modal-nav modal-prev" id="modal-prev" aria-label="Previous photo">‹</button>
-        <button class="modal-nav modal-next" id="modal-next" aria-label="Next photo">›</button>
-        <div class="modal-image-container">
-            <img class="modal-image" id="modal-image" alt="Full size photo">
-        </div>
-        <div class="modal-caption" id="modal-caption"></div>
+<!-- Gallery Modal -->
+<div class="gallery-modal" id="gallery-modal">
+    <div class="gallery-modal-content">
+        <button class="gallery-modal-close" id="gallery-modal-close">&times;</button>
+        <button class="gallery-modal-nav gallery-modal-prev" id="gallery-modal-prev">‹</button>
+        <button class="gallery-modal-nav gallery-modal-next" id="gallery-modal-next">›</button>
+        <img class="gallery-modal-image" id="gallery-modal-image" alt="Gallery image">
+        <div class="gallery-modal-caption" id="gallery-modal-caption"></div>
     </div>
 </div>
 
 <script>
-// Gallery photos configuration
-const galleryPhotos = [
-    // Add your photos here - they will be automatically loaded from /assets/images/gallery/
-    // Example format:
-    // { src: '/assets/images/gallery/photo1.jpg', caption: 'Beautiful landscape', alt: 'Mountain view' },
-    // { src: '/assets/images/gallery/photo2.jpg', caption: 'Urban photography', alt: 'City street' },
-];
+// Simple Gallery Implementation
+let galleryPhotos = [];
+let currentIndex = 0;
 
-// Initialize gallery when page loads
+// Initialize when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    initializeGallery();
+    initGallery();
 });
 
-function initializeGallery() {
-    const galleryGrid = document.getElementById('gallery-grid');
-    const photoModal = document.getElementById('photo-modal');
-    const modalImage = document.getElementById('modal-image');
-    const modalCaption = document.getElementById('modal-caption');
-    const modalClose = document.getElementById('modal-close');
-    const modalOverlay = document.getElementById('modal-overlay');
-    const modalPrev = document.getElementById('modal-prev');
-    const modalNext = document.getElementById('modal-next');
-
-    // Load photos from the gallery directory
-    loadGalleryPhotos();
-
-    // Add event listeners for modal
-    modalClose.addEventListener('click', closeModal);
-    modalOverlay.addEventListener('click', closeModal);
-    modalPrev.addEventListener('click', previousPhoto);
-    modalNext.addEventListener('click', nextPhoto);
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', function(e) {
-        if (photoModal.classList.contains('active')) {
-            if (e.key === 'Escape') {
-                closeModal();
-            } else if (e.key === 'ArrowLeft') {
-                previousPhoto();
-            } else if (e.key === 'ArrowRight') {
-                nextPhoto();
-            }
-        }
-    });
-}
-
-function loadGalleryPhotos() {
-    const galleryGrid = document.getElementById('gallery-grid');
-    
-    // For now, we'll use the existing photos from the images directory
-    // In a real implementation, you would scan the /assets/images/gallery/ directory
-    const existingPhotos = [
+function initGallery() {
+    // Define photos
+    galleryPhotos = [
         { src: '/assets/images/2.jpg', caption: 'Photography Work', alt: 'Creative photography' },
         { src: '/assets/images/3.jpg', caption: 'Artistic Shot', alt: 'Artistic photography' },
         { src: '/assets/images/4.jpg', caption: 'Portrait Work', alt: 'Portrait photography' },
@@ -98,101 +55,112 @@ function loadGalleryPhotos() {
         { src: '/assets/images/DSCF4375.jpg', caption: 'Professional Photography', alt: 'Professional work' }
     ];
 
-    // Store photos globally for navigation
-    allPhotos = existingPhotos;
+    // Create gallery
+    createGallery();
+    
+    // Setup modal
+    setupModal();
+}
 
-    // Clear loading state
-    galleryGrid.innerHTML = '';
+function createGallery() {
+    const grid = document.getElementById('gallery-grid');
+    grid.innerHTML = '';
 
-    // Create gallery items
-    existingPhotos.forEach((photo, index) => {
-        const galleryItem = createGalleryItem(photo, index);
-        galleryGrid.appendChild(galleryItem);
+    galleryPhotos.forEach((photo, index) => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.innerHTML = `
+            <div class="gallery-image-container">
+                <img src="${photo.src}" alt="${photo.alt}" class="gallery-image" loading="lazy">
+                <div class="gallery-overlay">
+                    <div class="gallery-overlay-content">
+                        <span class="gallery-icon">🔍</span>
+                        <span class="gallery-text">View Full Size</span>
+                    </div>
+                </div>
+            </div>
+            <div class="gallery-caption">
+                <p>${photo.caption}</p>
+            </div>
+        `;
+        
+        item.addEventListener('click', () => openModal(index));
+        grid.appendChild(item);
     });
 }
 
-function createGalleryItem(photo, index) {
-    const item = document.createElement('div');
-    item.className = 'gallery-item';
-    item.innerHTML = `
-        <div class="gallery-image-container">
-            <img src="${photo.src}" alt="${photo.alt}" class="gallery-image" loading="lazy">
-            <div class="gallery-overlay">
-                <div class="gallery-overlay-content">
-                    <span class="gallery-icon">🔍</span>
-                    <span class="gallery-text">View Full Size</span>
-                </div>
-            </div>
-        </div>
-        <div class="gallery-caption">
-            <p>${photo.caption}</p>
-        </div>
-    `;
+function setupModal() {
+    const modal = document.getElementById('gallery-modal');
+    const closeBtn = document.getElementById('gallery-modal-close');
+    const prevBtn = document.getElementById('gallery-modal-prev');
+    const nextBtn = document.getElementById('gallery-modal-next');
 
-    // Add click event to open modal
-    item.addEventListener('click', () => openModal(photo));
-    
-    return item;
+    // Close modal
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+
+    // Navigation
+    prevBtn.addEventListener('click', previousPhoto);
+    nextBtn.addEventListener('click', nextPhoto);
+
+    // Keyboard
+    document.addEventListener('keydown', function(e) {
+        if (!modal.classList.contains('active')) return;
+        
+        if (e.key === 'Escape') closeModal();
+        if (e.key === 'ArrowLeft') previousPhoto();
+        if (e.key === 'ArrowRight') nextPhoto();
+    });
 }
 
-// Global variables for navigation
-let currentPhotoIndex = 0;
-let allPhotos = [];
+function openModal(index) {
+    currentIndex = index;
+    const modal = document.getElementById('gallery-modal');
+    const img = document.getElementById('gallery-modal-image');
+    const caption = document.getElementById('gallery-modal-caption');
+    const prevBtn = document.getElementById('gallery-modal-prev');
+    const nextBtn = document.getElementById('gallery-modal-next');
 
-function openModal(photo) {
-    const photoModal = document.getElementById('photo-modal');
-    const modalImage = document.getElementById('modal-image');
-    const modalCaption = document.getElementById('modal-caption');
-    const modalPrev = document.getElementById('modal-prev');
-    const modalNext = document.getElementById('modal-next');
+    const photo = galleryPhotos[index];
+    img.src = photo.src;
+    img.alt = photo.alt;
+    caption.textContent = photo.caption;
 
-    // Find the index of the current photo
-    currentPhotoIndex = allPhotos.findIndex(p => p.src === photo.src);
-    
-    // Update modal content
-    modalImage.src = photo.src;
-    modalImage.alt = photo.alt;
-    modalCaption.textContent = photo.caption;
+    // Show/hide navigation
+    prevBtn.style.display = galleryPhotos.length > 1 ? 'flex' : 'none';
+    nextBtn.style.display = galleryPhotos.length > 1 ? 'flex' : 'none';
 
-    // Update navigation button states
-    modalPrev.style.display = allPhotos.length > 1 ? 'flex' : 'none';
-    modalNext.style.display = allPhotos.length > 1 ? 'flex' : 'none';
-
-    photoModal.classList.add('active');
-    document.body.classList.add('modal-open'); // Prevent background scrolling and fix positioning
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
 function closeModal() {
-    const photoModal = document.getElementById('photo-modal');
-    photoModal.classList.remove('active');
-    document.body.classList.remove('modal-open'); // Restore scrolling and positioning
+    const modal = document.getElementById('gallery-modal');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
 }
 
 function previousPhoto() {
-    if (allPhotos.length <= 1) return;
-    
-    currentPhotoIndex = (currentPhotoIndex - 1 + allPhotos.length) % allPhotos.length;
-    const photo = allPhotos[currentPhotoIndex];
-    
-    const modalImage = document.getElementById('modal-image');
-    const modalCaption = document.getElementById('modal-caption');
-    
-    modalImage.src = photo.src;
-    modalImage.alt = photo.alt;
-    modalCaption.textContent = photo.caption;
+    if (galleryPhotos.length <= 1) return;
+    currentIndex = (currentIndex - 1 + galleryPhotos.length) % galleryPhotos.length;
+    updateModalPhoto();
 }
 
 function nextPhoto() {
-    if (allPhotos.length <= 1) return;
+    if (galleryPhotos.length <= 1) return;
+    currentIndex = (currentIndex + 1) % galleryPhotos.length;
+    updateModalPhoto();
+}
+
+function updateModalPhoto() {
+    const img = document.getElementById('gallery-modal-image');
+    const caption = document.getElementById('gallery-modal-caption');
+    const photo = galleryPhotos[currentIndex];
     
-    currentPhotoIndex = (currentPhotoIndex + 1) % allPhotos.length;
-    const photo = allPhotos[currentPhotoIndex];
-    
-    const modalImage = document.getElementById('modal-image');
-    const modalCaption = document.getElementById('modal-caption');
-    
-    modalImage.src = photo.src;
-    modalImage.alt = photo.alt;
-    modalCaption.textContent = photo.caption;
+    img.src = photo.src;
+    img.alt = photo.alt;
+    caption.textContent = photo.caption;
 }
 </script>

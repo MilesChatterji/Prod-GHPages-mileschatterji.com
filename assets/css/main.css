@@ -831,85 +831,77 @@ a:hover {
     100% { transform: rotate(360deg); }
 }
 
-/* Photo Modal - Complete Rewrite */
-.photo-modal {
+/* Gallery Modal - Brand New Implementation */
+.gallery-modal {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 9999;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    pointer-events: none;
-}
-
-.photo-modal.active {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-}
-
-.modal-overlay {
-    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-.modal-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.9);
-    width: 90vw;
-    height: 90vh;
-    max-width: 1200px;
-    max-height: 800px;
+.gallery-modal.active {
+    display: flex;
+}
+
+.gallery-modal-content {
+    position: relative;
+    max-width: 100%;
+    max-height: 100%;
     background: var(--bg-secondary);
-    border-radius: 12px;
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8);
-    transition: transform 0.3s ease;
-    display: grid;
-    grid-template-rows: 1fr auto;
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
 }
 
-.photo-modal.active .modal-content {
-    transform: translate(-50%, -50%) scale(1);
+.gallery-modal-image {
+    max-width: 100%;
+    max-height: calc(100vh - 120px);
+    width: auto;
+    height: auto;
+    display: block;
+    margin: 0 auto;
 }
 
-.modal-close {
+.gallery-modal-caption {
+    padding: 15px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    text-align: center;
+    font-size: 14px;
+    border-top: 1px solid var(--border-color);
+}
+
+.gallery-modal-close {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 10px;
+    right: 10px;
     background: rgba(0, 0, 0, 0.8);
     color: white;
     border: none;
     border-radius: 50%;
-    width: 44px;
-    height: 44px;
-    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
     cursor: pointer;
-    z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
+    z-index: 10001;
 }
 
-.modal-close:hover {
+.gallery-modal-close:hover {
     background: rgba(255, 140, 0, 0.9);
-    transform: scale(1.1);
 }
 
-.modal-nav {
+.gallery-modal-nav {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -919,59 +911,24 @@ a:hover {
     border-radius: 50%;
     width: 50px;
     height: 50px;
-    font-size: 1.8rem;
+    font-size: 20px;
     cursor: pointer;
-    z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    opacity: 0.9;
+    z-index: 10001;
 }
 
-.modal-nav:hover {
+.gallery-modal-nav:hover {
     background: rgba(255, 140, 0, 0.9);
-    transform: translateY(-50%) scale(1.1);
-    opacity: 1;
 }
 
-.modal-prev {
-    left: 1rem;
+.gallery-modal-prev {
+    left: 20px;
 }
 
-.modal-next {
-    right: 1rem;
-}
-
-.modal-image-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    padding: 2rem;
-    box-sizing: border-box;
-}
-
-.modal-image {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    display: block;
-    border-radius: 8px;
-}
-
-.modal-caption {
-    padding: 1.5rem;
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    font-size: 1.1rem;
-    font-weight: 500;
-    text-align: center;
-    border-top: 1px solid var(--border-color);
+.gallery-modal-next {
+    right: 20px;
 }
 
 /* Responsive Design for Gallery */
@@ -989,42 +946,39 @@ a:hover {
         padding: 1rem;
     }
     
-    .modal-content {
-        width: 95vw;
-        height: 95vh;
-        max-width: none;
-        max-height: none;
+    .gallery-modal {
+        padding: 15px;
     }
     
-    .modal-image-container {
-        padding: 1rem;
+    .gallery-modal-image {
+        max-height: calc(100vh - 100px);
     }
     
-    .modal-caption {
-        padding: 1rem;
-        font-size: 1rem;
+    .gallery-modal-caption {
+        padding: 12px;
+        font-size: 13px;
     }
     
-    .modal-close {
-        width: 40px;
-        height: 40px;
-        font-size: 1.3rem;
-        top: 0.75rem;
-        right: 0.75rem;
+    .gallery-modal-close {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+        top: 8px;
+        right: 8px;
     }
     
-    .modal-nav {
+    .gallery-modal-nav {
         width: 44px;
         height: 44px;
-        font-size: 1.6rem;
+        font-size: 18px;
     }
     
-    .modal-prev {
-        left: 0.75rem;
+    .gallery-modal-prev {
+        left: 15px;
     }
     
-    .modal-next {
-        right: 0.75rem;
+    .gallery-modal-next {
+        right: 15px;
     }
 }
 
@@ -1050,35 +1004,39 @@ a:hover {
         font-size: 1rem;
     }
     
-    .modal-content {
-        width: 98vw;
-        height: 98vh;
+    .gallery-modal {
+        padding: 10px;
     }
     
-    .modal-image-container {
-        padding: 0.75rem;
+    .gallery-modal-image {
+        max-height: calc(100vh - 80px);
     }
     
-    .modal-close {
-        width: 36px;
-        height: 36px;
-        font-size: 1.2rem;
-        top: 0.5rem;
-        right: 0.5rem;
+    .gallery-modal-caption {
+        padding: 10px;
+        font-size: 12px;
     }
     
-    .modal-nav {
+    .gallery-modal-close {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+        top: 6px;
+        right: 6px;
+    }
+    
+    .gallery-modal-nav {
         width: 40px;
         height: 40px;
-        font-size: 1.4rem;
+        font-size: 16px;
     }
     
-    .modal-prev {
-        left: 0.5rem;
+    .gallery-modal-prev {
+        left: 10px;
     }
     
-    .modal-next {
-        right: 0.5rem;
+    .gallery-modal-next {
+        right: 10px;
     }
 }
 
