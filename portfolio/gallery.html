@@ -157,13 +157,13 @@ function openModal(photo) {
     modalNext.style.display = allPhotos.length > 1 ? 'flex' : 'none';
 
     photoModal.classList.add('active');
-    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    document.body.classList.add('modal-open'); // Prevent background scrolling and fix positioning
 }
 
 function closeModal() {
     const photoModal = document.getElementById('photo-modal');
     photoModal.classList.remove('active');
-    document.body.style.overflow = ''; // Restore scrolling
+    document.body.classList.remove('modal-open'); // Restore scrolling and positioning
 }
 
 function previousPhoto() {
