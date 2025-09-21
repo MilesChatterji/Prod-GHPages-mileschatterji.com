@@ -831,43 +831,42 @@ a:hover {
     100% { transform: rotate(360deg); }
 }
 
-/* Gallery Modal - Brand New Implementation */
+/* Gallery Modal - Ultra Simple Implementation */
 .gallery-modal {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.95);
     z-index: 10000;
     display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    box-sizing: border-box;
 }
 
 .gallery-modal.active {
-    display: flex;
+    display: block;
 }
 
 .gallery-modal-content {
-    position: relative;
-    max-width: 100%;
-    max-height: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background: var(--bg-secondary);
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    max-width: 90vw;
+    max-height: 90vh;
 }
 
 .gallery-modal-image {
+    display: block;
     max-width: 100%;
-    max-height: calc(100vh - 120px);
+    max-height: calc(90vh - 60px);
     width: auto;
     height: auto;
-    display: block;
-    margin: 0 auto;
+    margin: 0;
 }
 
 .gallery-modal-caption {
@@ -877,6 +876,7 @@ a:hover {
     text-align: center;
     font-size: 14px;
     border-top: 1px solid var(--border-color);
+    margin: 0;
 }
 
 .gallery-modal-close {
@@ -946,12 +946,13 @@ a:hover {
         padding: 1rem;
     }
     
-    .gallery-modal {
-        padding: 15px;
+    .gallery-modal-content {
+        max-width: 95vw;
+        max-height: 95vh;
     }
     
     .gallery-modal-image {
-        max-height: calc(100vh - 100px);
+        max-height: calc(95vh - 60px);
     }
     
     .gallery-modal-caption {
@@ -1004,12 +1005,13 @@ a:hover {
         font-size: 1rem;
     }
     
-    .gallery-modal {
-        padding: 10px;
+    .gallery-modal-content {
+        max-width: 98vw;
+        max-height: 98vh;
     }
     
     .gallery-modal-image {
-        max-height: calc(100vh - 80px);
+        max-height: calc(98vh - 60px);
     }
     
     .gallery-modal-caption {
