@@ -831,44 +831,6 @@ a:hover {
     100% { transform: rotate(360deg); }
 }
 
-/* PhotoSwipe Customization */
-.pswp__bg {
-    background: rgba(0, 0, 0, 0.95) !important;
-}
-
-.pswp__button {
-    background: rgba(0, 0, 0, 0.8) !important;
-    color: white !important;
-    border-radius: 50% !important;
-    transition: all 0.3s ease !important;
-}
-
-.pswp__button:hover {
-    background: rgba(255, 140, 0, 0.9) !important;
-    transform: scale(1.1) !important;
-}
-
-.pswp__button--close {
-    background: rgba(0, 0, 0, 0.8) !important;
-}
-
-.pswp__button--arrow--left,
-.pswp__button--arrow--right {
-    background: rgba(0, 0, 0, 0.8) !important;
-}
-
-.pswp__caption {
-    background: var(--bg-secondary) !important;
-    color: var(--text-primary) !important;
-    border-top: 1px solid var(--border-color) !important;
-}
-
-.pswp__counter {
-    color: white !important;
-    background: rgba(0, 0, 0, 0.8) !important;
-    border-radius: 20px !important;
-    padding: 5px 15px !important;
-}
 
 /* Responsive Design for Gallery */
 @media (max-width: 768px) {
@@ -885,16 +847,6 @@ a:hover {
         padding: 1rem;
     }
     
-    /* PhotoSwipe responsive adjustments */
-    .pswp__button {
-        width: 44px !important;
-        height: 44px !important;
-    }
-    
-    .pswp__button--close {
-        width: 36px !important;
-        height: 36px !important;
-    }
 }
 
 @media (max-width: 480px) {
@@ -919,16 +871,6 @@ a:hover {
         font-size: 1rem;
     }
     
-    /* PhotoSwipe mobile adjustments */
-    .pswp__button {
-        width: 40px !important;
-        height: 40px !important;
-    }
-    
-    .pswp__button--close {
-        width: 32px !important;
-        height: 32px !important;
-    }
 }
 
 /* Tags */
