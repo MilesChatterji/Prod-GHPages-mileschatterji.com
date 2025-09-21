@@ -35,6 +35,10 @@ plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
 
+# GitHub Pages settings
+github: [MilesChatterji]  # Replace with your GitHub username
+repository: MilesChatterji/Prod-GHPages-mileschatterji.com-1  # Replace with your repository name
+
 # Exclude from processing
 exclude:
   - Gemfile
