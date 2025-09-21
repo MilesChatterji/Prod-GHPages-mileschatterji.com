@@ -194,6 +194,21 @@ Supported formats: .jpg, .jpeg, .png, .gif, .webp, .bmp, .tiff
             
             <div class="gallery-item" data-index="0">
                 <div class="gallery-image-container">
+                    <img class="gallery-image" src="/assets/images/gallery/Crying.jpg" alt="Crying" loading="lazy">
+                    <div class="gallery-overlay">
+                        <div class="gallery-overlay-content">
+                            <div class="gallery-icon">🔍</div>
+                            <div class="gallery-text">View Image</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-caption">
+                    <p>Crying</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-index="1">
+                <div class="gallery-image-container">
                     <img class="gallery-image" src="/assets/images/gallery/Gateway-To-LA.jpg" alt="Gateway To LA" loading="lazy">
                     <div class="gallery-overlay">
                         <div class="gallery-overlay-content">
@@ -207,7 +222,7 @@ Supported formats: .jpg, .jpeg, .png, .gif, .webp, .bmp, .tiff
                 </div>
             </div>
             
-            <div class="gallery-item" data-index="1">
+            <div class="gallery-item" data-index="2">
                 <div class="gallery-image-container">
                     <img class="gallery-image" src="/assets/images/gallery/LAXative-Day.jpg" alt="LAXative Day" loading="lazy">
                     <div class="gallery-overlay">
@@ -222,7 +237,7 @@ Supported formats: .jpg, .jpeg, .png, .gif, .webp, .bmp, .tiff
                 </div>
             </div>
             
-            <div class="gallery-item" data-index="2">
+            <div class="gallery-item" data-index="3">
                 <div class="gallery-image-container">
                     <img class="gallery-image" src="/assets/images/gallery/LAXative.jpg" alt="LAXative" loading="lazy">
                     <div class="gallery-overlay">
@@ -237,9 +252,9 @@ Supported formats: .jpg, .jpeg, .png, .gif, .webp, .bmp, .tiff
                 </div>
             </div>
             
-            <div class="gallery-item" data-index="3">
+            <div class="gallery-item" data-index="4">
                 <div class="gallery-image-container">
-                    <img class="gallery-image" src="/assets/images/gallery/montebello.jpg" alt="Montebello" loading="lazy">
+                    <img class="gallery-image" src="/assets/images/gallery/Montebello.jpg" alt="Montebello" loading="lazy">
                     <div class="gallery-overlay">
                         <div class="gallery-overlay-content">
                             <div class="gallery-icon">🔍</div>
@@ -252,9 +267,9 @@ Supported formats: .jpg, .jpeg, .png, .gif, .webp, .bmp, .tiff
                 </div>
             </div>
             
-            <div class="gallery-item" data-index="4">
+            <div class="gallery-item" data-index="5">
                 <div class="gallery-image-container">
-                    <img class="gallery-image" src="/assets/images/gallery/reflections.jpg" alt="Reflections" loading="lazy">
+                    <img class="gallery-image" src="/assets/images/gallery/Reflections.jpg" alt="Reflections" loading="lazy">
                     <div class="gallery-overlay">
                         <div class="gallery-overlay-content">
                             <div class="gallery-icon">🔍</div>
@@ -308,6 +323,13 @@ const galleryImages = [
     
         
         {
+            src: '/assets/images/gallery/Crying.jpg',
+            alt: 'Crying',
+            caption: 'Crying',
+            filename: 'Crying.jpg'
+        },
+        
+        {
             src: '/assets/images/gallery/Gateway-To-LA.jpg',
             alt: 'Gateway To LA',
             caption: 'Gateway To LA',
@@ -329,17 +351,17 @@ const galleryImages = [
         },
         
         {
-            src: '/assets/images/gallery/montebello.jpg',
+            src: '/assets/images/gallery/Montebello.jpg',
             alt: 'Montebello',
             caption: 'Montebello',
-            filename: 'montebello.jpg'
+            filename: 'Montebello.jpg'
         },
         
         {
-            src: '/assets/images/gallery/reflections.jpg',
+            src: '/assets/images/gallery/Reflections.jpg',
             alt: 'Reflections',
             caption: 'Reflections',
-            filename: 'reflections.jpg'
+            filename: 'Reflections.jpg'
         }
         
     
@@ -404,8 +426,9 @@ class PhotoGallery {
         const lightboxImg = new Image();
         lightboxImg.onload = () => {
             // Scale image for optimal viewing while maintaining aspect ratio
+            // Account for counter space and modal padding
             const maxWidth = window.innerWidth * 0.9;
-            const maxHeight = window.innerHeight * 0.8;
+            const maxHeight = window.innerHeight * 0.75; // Reduced to account for counter and padding
             
             let { width, height } = lightboxImg;
             
@@ -579,7 +602,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const img = new Image();
                         img.onload = () => {
                             const maxWidth = window.innerWidth * 0.9;
-                            const maxHeight = window.innerHeight * 0.8;
+                            const maxHeight = window.innerHeight * 0.75; // Reduced to account for counter and padding
                             
                             let { width, height } = img;
                             

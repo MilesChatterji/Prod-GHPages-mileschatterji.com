@@ -863,7 +863,7 @@ a:hover {
 .lightbox-content {
     position: relative;
     max-width: 90vw;
-    max-height: 90vh;
+    max-height: 90vh; /* Increased to give more space for images */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -877,6 +877,7 @@ a:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center; /* Center the image vertically */
 }
 
 .lightbox-image {
@@ -901,8 +902,8 @@ a:hover {
 }
 
 .lightbox-counter {
-    position: absolute;
-    top: -3rem;
+    position: fixed;
+    bottom: 2rem;
     left: 50%;
     transform: translateX(-50%);
     background: var(--bg-secondary);
@@ -913,12 +914,13 @@ a:hover {
     font-weight: 500;
     border: 1px solid var(--border-color);
     box-shadow: 0 2px 8px var(--shadow-color);
+    z-index: 10003;
 }
 
 .lightbox-close {
-    position: absolute;
-    top: -3rem;
-    right: -3rem;
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
     width: 40px;
     height: 40px;
     background: var(--bg-secondary);
@@ -930,7 +932,7 @@ a:hover {
     align-items: center;
     justify-content: center;
     transition: all var(--transition-speed) ease;
-    z-index: 10002;
+    z-index: 10003;
     box-shadow: 0 2px 8px var(--shadow-color);
 }
 
@@ -946,7 +948,7 @@ a:hover {
 }
 
 .lightbox-nav {
-    position: absolute;
+    position: fixed;
     top: 50%;
     transform: translateY(-50%);
     width: 50px;
@@ -960,7 +962,7 @@ a:hover {
     align-items: center;
     justify-content: center;
     transition: all var(--transition-speed) ease;
-    z-index: 10002;
+    z-index: 10003;
     box-shadow: 0 4px 12px var(--shadow-color);
 }
 
@@ -976,11 +978,11 @@ a:hover {
 }
 
 .lightbox-prev {
-    left: -2rem;
+    left: 2rem;
 }
 
 .lightbox-next {
-    right: -2rem;
+    right: 2rem;
 }
 
 /* Lightbox animations */
@@ -1012,7 +1014,11 @@ a:hover {
 @media (max-width: 768px) {
     .lightbox-content {
         max-width: 95vw;
-        max-height: 95vh;
+        max-height: 95vh; /* Increased for mobile */
+    }
+    
+    .lightbox-image-container {
+        /* Padding removed - counter now positioned fixed */
     }
     
     .lightbox-image {
@@ -1020,8 +1026,8 @@ a:hover {
     }
     
     .lightbox-close {
-        top: -2rem;
-        right: -2rem;
+        top: 1.5rem;
+        right: 1.5rem;
         width: 36px;
         height: 36px;
     }
@@ -1042,15 +1048,15 @@ a:hover {
     }
     
     .lightbox-prev {
-        left: -1.5rem;
+        left: 1.5rem;
     }
     
     .lightbox-next {
-        right: -1.5rem;
+        right: 1.5rem;
     }
     
     .lightbox-counter {
-        top: -2.5rem;
+        bottom: 1.5rem;
         font-size: 0.8rem;
         padding: 0.4rem 0.8rem;
     }
@@ -1065,7 +1071,11 @@ a:hover {
 @media (max-width: 480px) {
     .lightbox-content {
         max-width: 98vw;
-        max-height: 98vh;
+        max-height: 90vh; /* Increased for small mobile */
+    }
+    
+    .lightbox-image-container {
+        /* Padding removed - counter now positioned fixed */
     }
     
     .lightbox-image {
@@ -1073,8 +1083,8 @@ a:hover {
     }
     
     .lightbox-close {
-        top: -1.5rem;
-        right: -1.5rem;
+        top: 1rem;
+        right: 1rem;
         width: 32px;
         height: 32px;
     }
@@ -1095,15 +1105,15 @@ a:hover {
     }
     
     .lightbox-prev {
-        left: -1rem;
+        left: 1rem;
     }
     
     .lightbox-next {
-        right: -1rem;
+        right: 1rem;
     }
     
     .lightbox-counter {
-        top: -2rem;
+        bottom: 1rem;
         font-size: 0.75rem;
         padding: 0.3rem 0.6rem;
     }
