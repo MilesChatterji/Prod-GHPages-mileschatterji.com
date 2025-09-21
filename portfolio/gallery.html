@@ -4,6 +4,27 @@ title: Photo Gallery
 subtitle: A curated collection of my photography work
 ---
 
+<!-- 
+DYNAMIC GALLERY SYSTEM
+======================
+
+This gallery automatically displays all images from /assets/images/gallery/
+No manual updates required!
+
+HOW IT WORKS:
+1. Jekyll plugin (_plugins/gallery_generator.rb) scans the gallery directory
+2. Generates data file (_data/gallery.yml) with all image information
+3. Liquid templating renders gallery items from the data
+4. JavaScript handles lightbox functionality
+
+TO ADD NEW IMAGES:
+1. Add image files to /assets/images/gallery/
+2. Run 'jekyll build' or 'jekyll serve'
+3. Images automatically appear in the gallery!
+
+Supported formats: .jpg, .jpeg, .png, .gif, .webp, .bmp, .tiff
+-->
+
 <div class="gallery-header">
     <h2>About the Collection</h2>
     <p>This collection represents my journey through street photography and urban landscapes, focusing on the interplay between architecture, light, and human presence in urban environments.</p>
@@ -11,12 +32,29 @@ subtitle: A curated collection of my photography work
 
 <div class="gallery-container">
     <div class="gallery-grid" id="galleryGrid">
-        <!-- Images will be dynamically loaded here -->
-    </div>
-    
-    <div class="gallery-loading" id="galleryLoading">
-        <div class="loading-spinner"></div>
-        <p>Loading gallery...</p>
+        {% if site.data.gallery and site.data.gallery.images %}
+            {% for image in site.data.gallery.images %}
+            <div class="gallery-item" data-index="{{ forloop.index0 }}">
+                <div class="gallery-image-container">
+                    <img class="gallery-image" src="{{ image.src }}" alt="{{ image.alt }}" loading="lazy">
+                    <div class="gallery-overlay">
+                        <div class="gallery-overlay-content">
+                            <div class="gallery-icon">🔍</div>
+                            <div class="gallery-text">View Image</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-caption">
+                    <p>{{ image.caption }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="gallery-loading">
+                <div class="loading-spinner"></div>
+                <p>No images found in gallery. Please add images to /assets/images/gallery/ and rebuild the site.</p>
+            </div>
+        {% endif %}
     </div>
 </div>
 
@@ -52,23 +90,20 @@ subtitle: A curated collection of my photography work
 </div>
 
 <script>
-// Gallery images data - these will be dynamically populated
+// Gallery images data - populated from Jekyll data
 const galleryImages = [
-    {
-        src: '/assets/images/gallery/LAXative.jpg',
-        alt: 'LAXative',
-        caption: 'Urban exploration at LAX'
-    },
-    {
-        src: '/assets/images/gallery/montebello.jpg',
-        alt: 'Montebello',
-        caption: 'Montebello landscape'
-    },
-    {
-        src: '/assets/images/gallery/reflections.jpg',
-        alt: 'Reflections',
-        caption: 'Reflections in the city'
-    }
+    {% if site.data.gallery and site.data.gallery.images %}
+        {% for image in site.data.gallery.images %}
+        {
+            src: '{{ image.src }}',
+            alt: '{{ image.alt }}',
+            caption: '{{ image.caption }}',
+            filename: '{{ image.filename }}'
+        }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+    {% else %}
+        // Fallback empty array if no gallery data
+    {% endif %}
 ];
 
 // Gallery functionality
@@ -84,7 +119,6 @@ class PhotoGallery {
     
     init() {
         this.preloadImages();
-        this.renderGallery();
         this.setupEventListeners();
     }
     
@@ -107,86 +141,8 @@ class PhotoGallery {
     }
     
     updateLoadingState() {
-        const loading = document.getElementById('galleryLoading');
-        if (loading && this.loadedImages.size > 0) {
-            loading.style.display = 'none';
-        }
-    }
-    
-    renderGallery() {
-        const galleryGrid = document.getElementById('galleryGrid');
-        const loading = document.getElementById('galleryLoading');
-        
-        if (!galleryGrid) return;
-        
-        // Hide loading
-        if (loading) {
-            loading.style.display = 'none';
-        }
-        
-        // Clear existing content
-        galleryGrid.innerHTML = '';
-        
-        // Render gallery items
-        this.images.forEach((image, index) => {
-            const galleryItem = this.createGalleryItem(image, index);
-            galleryGrid.appendChild(galleryItem);
-        });
-    }
-    
-    createGalleryItem(image, index) {
-        const item = document.createElement('div');
-        item.className = 'gallery-item';
-        item.setAttribute('data-index', index);
-        
-        // Create optimized image with placeholder
-        const img = document.createElement('img');
-        img.className = 'gallery-image';
-        img.alt = image.alt;
-        img.loading = 'lazy';
-        
-        // Add loading placeholder
-        img.style.backgroundColor = '#f0f0f0';
-        img.style.minHeight = '250px';
-        
-        // Set up image loading
-        img.onload = () => {
-            img.style.backgroundColor = 'transparent';
-            img.style.minHeight = 'auto';
-        };
-        
-        img.onerror = () => {
-            img.style.backgroundColor = '#ffebee';
-            img.alt = 'Failed to load image';
-        };
-        
-        // Set source after setting up handlers
-        img.src = image.src;
-        
-        item.innerHTML = `
-            <div class="gallery-image-container">
-                <div class="gallery-overlay">
-                    <div class="gallery-overlay-content">
-                        <div class="gallery-icon">🔍</div>
-                        <div class="gallery-text">View Image</div>
-                    </div>
-                </div>
-            </div>
-            <div class="gallery-caption">
-                <p>${image.caption}</p>
-            </div>
-        `;
-        
-        // Insert the image into the container
-        const container = item.querySelector('.gallery-image-container');
-        container.insertBefore(img, container.firstChild);
-        
-        // Add click event
-        item.addEventListener('click', () => {
-            this.openLightbox(index);
-        });
-        
-        return item;
+        // Images are now rendered by Jekyll, so we don't need to hide loading manually
+        console.log(`Gallery loaded with ${this.images.length} images`);
     }
     
     openLightbox(index) {
@@ -286,6 +242,14 @@ class PhotoGallery {
     }
     
     setupEventListeners() {
+        // Add click events to gallery items (generated by Jekyll)
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        galleryItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                this.openLightbox(index);
+            });
+        });
+        
         // Close button
         const closeBtn = document.getElementById('lightboxClose');
         if (closeBtn) {
@@ -359,14 +323,6 @@ class PhotoGallery {
     }
 }
 
-// Utility function to automatically detect images in gallery directory
-// This would require server-side support, but provides a template for future enhancement
-function detectGalleryImages() {
-    // In a real implementation, this would make an API call to get available images
-    // For now, we'll use the predefined array
-    return galleryImages;
-}
-
 // Enhanced gallery initialization with error handling
 document.addEventListener('DOMContentLoaded', () => {
     try {
@@ -414,16 +370,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
+        // Log gallery info for debugging
+        console.log(`Dynamic gallery initialized with ${gallery.images.length} images`);
+        
     } catch (error) {
         console.error('Failed to initialize gallery:', error);
         
         // Fallback: show error message
         const galleryGrid = document.getElementById('galleryGrid');
-        const loading = document.getElementById('galleryLoading');
-        
-        if (loading) {
-            loading.innerHTML = `
-                <div style="color: var(--text-muted); text-align: center;">
+        if (galleryGrid) {
+            galleryGrid.innerHTML = `
+                <div style="color: var(--text-muted); text-align: center; padding: 3rem;">
                     <p>Unable to load gallery. Please refresh the page.</p>
                     <button onclick="location.reload()" class="btn" style="margin-top: 1rem;">
                         Refresh Page
