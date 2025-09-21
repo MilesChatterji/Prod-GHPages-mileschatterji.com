@@ -4,7 +4,433 @@ title: Photo Gallery
 subtitle: A curated collection of my photography work
 ---
 
-<h2>About the Collection</h2>
-<p>This collection represents my journey through street photography and urban landscapes, focusing on the interplay between architecture, light, and human presence in urban environments.</p>
+<div class="gallery-header">
+    <h2>About the Collection</h2>
+    <p>This collection represents my journey through street photography and urban landscapes, focusing on the interplay between architecture, light, and human presence in urban environments.</p>
+</div>
 
-<!-- Gallery content will go here -->
+<div class="gallery-container">
+    <div class="gallery-grid" id="galleryGrid">
+        <!-- Images will be dynamically loaded here -->
+    </div>
+    
+    <div class="gallery-loading" id="galleryLoading">
+        <div class="loading-spinner"></div>
+        <p>Loading gallery...</p>
+    </div>
+</div>
+
+<!-- Lightbox Modal -->
+<div class="lightbox-modal" id="lightboxModal">
+    <div class="lightbox-overlay" id="lightboxOverlay"></div>
+    <div class="lightbox-content">
+        <button class="lightbox-close" id="lightboxClose" aria-label="Close lightbox">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+        </button>
+        
+        <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous image">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+            </svg>
+        </button>
+        
+        <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next image">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+            </svg>
+        </button>
+        
+        <div class="lightbox-image-container">
+            <img class="lightbox-image" id="lightboxImage" alt="Gallery image">
+            <div class="lightbox-caption" id="lightboxCaption"></div>
+        </div>
+        
+        <div class="lightbox-counter" id="lightboxCounter"></div>
+    </div>
+</div>
+
+<script>
+// Gallery images data - these will be dynamically populated
+const galleryImages = [
+    {
+        src: '/assets/images/gallery/LAXative.jpg',
+        alt: 'LAXative',
+        caption: 'Urban exploration at LAX'
+    },
+    {
+        src: '/assets/images/gallery/montebello.jpg',
+        alt: 'Montebello',
+        caption: 'Montebello landscape'
+    },
+    {
+        src: '/assets/images/gallery/reflections.jpg',
+        alt: 'Reflections',
+        caption: 'Reflections in the city'
+    }
+];
+
+// Gallery functionality
+class PhotoGallery {
+    constructor() {
+        this.images = galleryImages;
+        this.currentIndex = 0;
+        this.isLightboxOpen = false;
+        this.loadedImages = new Set();
+        
+        this.init();
+    }
+    
+    init() {
+        this.preloadImages();
+        this.renderGallery();
+        this.setupEventListeners();
+    }
+    
+    preloadImages() {
+        // Preload images for better performance
+        this.images.forEach((image, index) => {
+            const img = new Image();
+            img.onload = () => {
+                this.loadedImages.add(index);
+                // Update loading state if this is the first image
+                if (index === 0) {
+                    this.updateLoadingState();
+                }
+            };
+            img.onerror = () => {
+                console.warn(`Failed to load image: ${image.src}`);
+            };
+            img.src = image.src;
+        });
+    }
+    
+    updateLoadingState() {
+        const loading = document.getElementById('galleryLoading');
+        if (loading && this.loadedImages.size > 0) {
+            loading.style.display = 'none';
+        }
+    }
+    
+    renderGallery() {
+        const galleryGrid = document.getElementById('galleryGrid');
+        const loading = document.getElementById('galleryLoading');
+        
+        if (!galleryGrid) return;
+        
+        // Hide loading
+        if (loading) {
+            loading.style.display = 'none';
+        }
+        
+        // Clear existing content
+        galleryGrid.innerHTML = '';
+        
+        // Render gallery items
+        this.images.forEach((image, index) => {
+            const galleryItem = this.createGalleryItem(image, index);
+            galleryGrid.appendChild(galleryItem);
+        });
+    }
+    
+    createGalleryItem(image, index) {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.setAttribute('data-index', index);
+        
+        // Create optimized image with placeholder
+        const img = document.createElement('img');
+        img.className = 'gallery-image';
+        img.alt = image.alt;
+        img.loading = 'lazy';
+        
+        // Add loading placeholder
+        img.style.backgroundColor = '#f0f0f0';
+        img.style.minHeight = '250px';
+        
+        // Set up image loading
+        img.onload = () => {
+            img.style.backgroundColor = 'transparent';
+            img.style.minHeight = 'auto';
+        };
+        
+        img.onerror = () => {
+            img.style.backgroundColor = '#ffebee';
+            img.alt = 'Failed to load image';
+        };
+        
+        // Set source after setting up handlers
+        img.src = image.src;
+        
+        item.innerHTML = `
+            <div class="gallery-image-container">
+                <div class="gallery-overlay">
+                    <div class="gallery-overlay-content">
+                        <div class="gallery-icon">🔍</div>
+                        <div class="gallery-text">View Image</div>
+                    </div>
+                </div>
+            </div>
+            <div class="gallery-caption">
+                <p>${image.caption}</p>
+            </div>
+        `;
+        
+        // Insert the image into the container
+        const container = item.querySelector('.gallery-image-container');
+        container.insertBefore(img, container.firstChild);
+        
+        // Add click event
+        item.addEventListener('click', () => {
+            this.openLightbox(index);
+        });
+        
+        return item;
+    }
+    
+    openLightbox(index) {
+        this.currentIndex = index;
+        this.isLightboxOpen = true;
+        
+        const modal = document.getElementById('lightboxModal');
+        const image = document.getElementById('lightboxImage');
+        const caption = document.getElementById('lightboxCaption');
+        const counter = document.getElementById('lightboxCounter');
+        
+        if (!modal || !image) return;
+        
+        // Update image with loading state
+        const currentImage = this.images[index];
+        image.style.opacity = '0.5';
+        image.style.transform = 'scale(0.95)';
+        
+        // Create optimized image for lightbox
+        const lightboxImg = new Image();
+        lightboxImg.onload = () => {
+            // Scale image for optimal viewing while maintaining aspect ratio
+            const maxWidth = window.innerWidth * 0.9;
+            const maxHeight = window.innerHeight * 0.8;
+            
+            let { width, height } = lightboxImg;
+            
+            // Calculate optimal dimensions
+            if (width > maxWidth || height > maxHeight) {
+                const widthRatio = maxWidth / width;
+                const heightRatio = maxHeight / height;
+                const ratio = Math.min(widthRatio, heightRatio);
+                
+                width = width * ratio;
+                height = height * ratio;
+            }
+            
+            // Apply optimized dimensions
+            image.style.width = `${width}px`;
+            image.style.height = `${height}px`;
+            image.src = currentImage.src;
+            image.alt = currentImage.alt;
+            
+            // Animate in
+            setTimeout(() => {
+                image.style.opacity = '1';
+                image.style.transform = 'scale(1)';
+            }, 50);
+        };
+        
+        lightboxImg.onerror = () => {
+            image.style.opacity = '1';
+            image.style.transform = 'scale(1)';
+            image.src = currentImage.src;
+            image.alt = 'Failed to load image';
+        };
+        
+        lightboxImg.src = currentImage.src;
+        
+        // Update caption
+        if (caption) {
+            caption.textContent = currentImage.caption;
+        }
+        
+        // Update counter
+        if (counter) {
+            counter.textContent = `${index + 1} / ${this.images.length}`;
+        }
+        
+        // Show modal
+        modal.style.display = 'flex';
+        document.body.classList.add('modal-open');
+        
+        // Focus management
+        modal.focus();
+    }
+    
+    closeLightbox() {
+        const modal = document.getElementById('lightboxModal');
+        if (!modal) return;
+        
+        modal.style.display = 'none';
+        document.body.classList.remove('modal-open');
+        this.isLightboxOpen = false;
+    }
+    
+    navigateToImage(direction) {
+        if (!this.isLightboxOpen) return;
+        
+        if (direction === 'prev') {
+            this.currentIndex = this.currentIndex > 0 ? this.currentIndex - 1 : this.images.length - 1;
+        } else {
+            this.currentIndex = this.currentIndex < this.images.length - 1 ? this.currentIndex + 1 : 0;
+        }
+        
+        this.openLightbox(this.currentIndex);
+    }
+    
+    setupEventListeners() {
+        // Close button
+        const closeBtn = document.getElementById('lightboxClose');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => this.closeLightbox());
+        }
+        
+        // Navigation buttons
+        const prevBtn = document.getElementById('lightboxPrev');
+        const nextBtn = document.getElementById('lightboxNext');
+        
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => this.navigateToImage('prev'));
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => this.navigateToImage('next'));
+        }
+        
+        // Overlay click to close
+        const overlay = document.getElementById('lightboxOverlay');
+        if (overlay) {
+            overlay.addEventListener('click', () => this.closeLightbox());
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (!this.isLightboxOpen) return;
+            
+            switch (e.key) {
+                case 'Escape':
+                    this.closeLightbox();
+                    break;
+                case 'ArrowLeft':
+                    this.navigateToImage('prev');
+                    break;
+                case 'ArrowRight':
+                    this.navigateToImage('next');
+                    break;
+            }
+        });
+        
+        // Touch/swipe support for mobile
+        let startX = 0;
+        let startY = 0;
+        
+        const modal = document.getElementById('lightboxModal');
+        if (modal) {
+            modal.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            });
+            
+            modal.addEventListener('touchend', (e) => {
+                if (!this.isLightboxOpen) return;
+                
+                const endX = e.changedTouches[0].clientX;
+                const endY = e.changedTouches[0].clientY;
+                const diffX = startX - endX;
+                const diffY = startY - endY;
+                
+                // Only handle horizontal swipes
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                    if (diffX > 0) {
+                        this.navigateToImage('next');
+                    } else {
+                        this.navigateToImage('prev');
+                    }
+                }
+            });
+        }
+    }
+}
+
+// Utility function to automatically detect images in gallery directory
+// This would require server-side support, but provides a template for future enhancement
+function detectGalleryImages() {
+    // In a real implementation, this would make an API call to get available images
+    // For now, we'll use the predefined array
+    return galleryImages;
+}
+
+// Enhanced gallery initialization with error handling
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const gallery = new PhotoGallery();
+        
+        // Add resize handler for responsive lightbox
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (gallery.isLightboxOpen) {
+                    // Recalculate lightbox image size on resize
+                    const image = document.getElementById('lightboxImage');
+                    if (image && image.src) {
+                        const img = new Image();
+                        img.onload = () => {
+                            const maxWidth = window.innerWidth * 0.9;
+                            const maxHeight = window.innerHeight * 0.8;
+                            
+                            let { width, height } = img;
+                            
+                            if (width > maxWidth || height > maxHeight) {
+                                const widthRatio = maxWidth / width;
+                                const heightRatio = maxHeight / height;
+                                const ratio = Math.min(widthRatio, heightRatio);
+                                
+                                width = width * ratio;
+                                height = height * ratio;
+                            }
+                            
+                            image.style.width = `${width}px`;
+                            image.style.height = `${height}px`;
+                        };
+                        img.src = image.src;
+                    }
+                }
+            }, 250);
+        });
+        
+        // Add performance monitoring
+        if ('performance' in window) {
+            const perfData = performance.getEntriesByType('navigation')[0];
+            if (perfData) {
+                console.log(`Gallery loaded in ${perfData.loadEventEnd - perfData.loadEventStart}ms`);
+            }
+        }
+        
+    } catch (error) {
+        console.error('Failed to initialize gallery:', error);
+        
+        // Fallback: show error message
+        const galleryGrid = document.getElementById('galleryGrid');
+        const loading = document.getElementById('galleryLoading');
+        
+        if (loading) {
+            loading.innerHTML = `
+                <div style="color: var(--text-muted); text-align: center;">
+                    <p>Unable to load gallery. Please refresh the page.</p>
+                    <button onclick="location.reload()" class="btn" style="margin-top: 1rem;">
+                        Refresh Page
+                    </button>
+                </div>
+            `;
+        }
+    }
+});
+</script>
