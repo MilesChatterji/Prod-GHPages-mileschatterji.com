@@ -319,7 +319,7 @@ Supported formats: .jpg, .jpeg, .png, .gif, .webp, .bmp, .tiff
 
 <script>
 // Gallery images data - populated from Jekyll data
-const galleryImages = [
+window.galleryImages = [
     
         
         {
@@ -426,9 +426,9 @@ class PhotoGallery {
         const lightboxImg = new Image();
         lightboxImg.onload = () => {
             // Scale image for optimal viewing while maintaining aspect ratio
-            // Account for counter space and modal padding
+            // Match CSS constraints: 90vw width, 80vh height
             const maxWidth = window.innerWidth * 0.9;
-            const maxHeight = window.innerHeight * 0.75; // Reduced to account for counter and padding
+            const maxHeight = window.innerHeight * 0.8; // Match CSS max-height: 80vh
             
             let { width, height } = lightboxImg;
             
@@ -475,7 +475,7 @@ class PhotoGallery {
         }
         
         // Show modal
-        modal.style.display = 'flex';
+        modal.classList.add('active');
         document.body.classList.add('modal-open');
         
         // Focus management
@@ -486,7 +486,7 @@ class PhotoGallery {
         const modal = document.getElementById('lightboxModal');
         if (!modal) return;
         
-        modal.style.display = 'none';
+        modal.classList.remove('active');
         document.body.classList.remove('modal-open');
         this.isLightboxOpen = false;
     }
@@ -602,7 +602,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const img = new Image();
                         img.onload = () => {
                             const maxWidth = window.innerWidth * 0.9;
-                            const maxHeight = window.innerHeight * 0.75; // Reduced to account for counter and padding
+                            const maxHeight = window.innerHeight * 0.8; // Match CSS max-height: 80vh
                             
                             let { width, height } = img;
                             
@@ -653,6 +653,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
+
+<!-- Load simplified lightbox JavaScript -->
+<script src="/assets/js/lightbox.js"></script>
     </div>
 </article>
 
