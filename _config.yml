@@ -53,10 +53,10 @@ exclude:
 navigation:
   - title: Biography
     submenu:
+      - title: Creative History
+        url: /biography/creative
       - title: Professional History
         url: /biography/experience/
-      - title: Creative History
-        url: /biography/creative/
   - title: Portfolio
     submenu:
       - title: Photography
