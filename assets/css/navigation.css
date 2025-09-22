@@ -68,6 +68,12 @@
     border-left-color: var(--accent-primary);
 }
 
+/* Non-clickable nav labels */
+.nav-label {
+    cursor: default;
+    pointer-events: none;
+}
+
 /* Submenu */
 .submenu {
     list-style: none;
@@ -220,10 +226,16 @@
     transition: max-height var(--transition-speed) ease;
 }
 
-.nav-item:hover .submenu,
-.nav-item:focus-within .submenu,
+/* Active sections keep their submenus open to show current location */
 .nav-item.active-section .submenu {
-    max-height: 200px;
+    max-height: 200px !important;
+    overflow: visible !important;
+}
+
+/* Hover works on all sections (but active sections take priority) */
+.nav-item:hover .submenu,
+.nav-item:focus-within .submenu {
+    max-height: 200px !important;
 }
 
 /* Active section styling */
@@ -234,20 +246,7 @@
     font-weight: 600;
 }
 
-.nav-item.active-section .nav-link::after {
-    content: '▼';
-    float: right;
-    font-size: 0.8rem;
-    transition: transform var(--transition-speed) ease;
-}
-
-.nav-item:not(.active-section) .nav-link::after {
-    content: '▶';
-    float: right;
-    font-size: 0.8rem;
-    opacity: 0.5;
-    transition: transform var(--transition-speed) ease;
-}
+/* Triangle indicators removed */
 
 /* Focus states for accessibility */
 .nav-link:focus,

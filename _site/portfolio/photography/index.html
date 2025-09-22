@@ -64,9 +64,9 @@
             <div class="sidebar-nav">
                 
                 <div class="nav-item">
-                    <a href="/" class="nav-link ">
-                        Biography
-                    </a>
+                    
+                    <span class="nav-link nav-label">Biography</span>
+                    
                     
                     <ul class="submenu">
                         
@@ -87,9 +87,9 @@
                 </div>
                 
                 <div class="nav-item">
-                    <a href="/" class="nav-link ">
-                        Portfolio
-                    </a>
+                    
+                    <span class="nav-link nav-label">Portfolio</span>
+                    
                     
                     <ul class="submenu">
                         
@@ -122,9 +122,11 @@
                 </div>
                 
                 <div class="nav-item">
+                    
                     <a href="/contact/" class="nav-link ">
                         Contact
                     </a>
+                    
                     
                 </div>
                 
@@ -307,6 +309,18 @@
         </main>
     </div>
     
+    <!-- Lightbox Modal - Available on all pages -->
+    <div id="lightboxModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); z-index: 9999;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: calc(100vw - 140px); max-height: calc(100vh - 40px); display: flex; flex-direction: column; align-items: center;">
+            <img id="lightboxImage" style="max-width: 100%; max-height: calc(100vh - 120px); object-fit: contain; border-radius: 8px;" alt="">
+            <div id="lightboxCaption" style="margin-top: 20px; padding: 10px 20px; background: rgba(255, 255, 255, 0.9); color: #000; border-radius: 20px; font-size: 14px; text-align: center;"></div>
+        </div>
+        
+        <button id="lightboxClose" style="position: absolute !important; top: 5px !important; right: 5px !important; width: 40px; height: 40px; background: rgba(255, 255, 255, 0.9); border: none; border-radius: 50%; font-size: 24px; cursor: pointer; z-index: 10000;">×</button>
+        <button id="lightboxPrev" style="position: absolute !important; top: 50% !important; left: 5px !important; transform: translateY(-50%); width: 50px; height: 50px; background: rgba(255, 255, 255, 0.9); border: none; border-radius: 50%; font-size: 24px; cursor: pointer; z-index: 10000;">‹</button>
+        <button id="lightboxNext" style="position: absolute !important; top: 50% !important; right: 5px !important; transform: translateY(-50%); width: 50px; height: 50px; background: rgba(255, 255, 255, 0.9); border: none; border-radius: 50%; font-size: 24px; cursor: pointer; z-index: 10000;">›</button>
+    </div>
+
     <!-- JavaScript -->
     <script src="/assets/js/navigation.js"></script>
     <script src="/assets/js/main.js"></script>

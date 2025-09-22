@@ -63,9 +63,9 @@
             <div class="sidebar-nav">
                 
                 <div class="nav-item">
-                    <a href="/" class="nav-link ">
-                        Biography
-                    </a>
+                    
+                    <span class="nav-link nav-label">Biography</span>
+                    
                     
                     <ul class="submenu">
                         
@@ -86,9 +86,9 @@
                 </div>
                 
                 <div class="nav-item">
-                    <a href="/" class="nav-link ">
-                        Portfolio
-                    </a>
+                    
+                    <span class="nav-link nav-label">Portfolio</span>
+                    
                     
                     <ul class="submenu">
                         
@@ -121,9 +121,11 @@
                 </div>
                 
                 <div class="nav-item">
+                    
                     <a href="/contact/" class="nav-link ">
                         Contact
                     </a>
+                    
                     
                 </div>
                 
@@ -184,8 +186,8 @@ Supported formats: .jpg, .jpeg, .png, .gif, .webp, .bmp, .tiff
 -->
 
 <div class="gallery-header">
-    <h2>About the Collection</h2>
-    <p>This collection represents my journey through street photography and urban landscapes, focusing on the interplay between architecture, light, and human presence in urban environments.</p>
+<h2>About the Collection</h2>
+<p>This collection represents my journey through street photography and urban landscapes, focusing on the interplay between architecture, light, and human presence in urban environments.</p>
 </div>
 
 <div class="gallery-container">
@@ -286,36 +288,7 @@ Supported formats: .jpg, .jpeg, .png, .gif, .webp, .bmp, .tiff
     </div>
 </div>
 
-<!-- Lightbox Modal -->
-<div class="lightbox-modal" id="lightboxModal">
-    <div class="lightbox-overlay" id="lightboxOverlay"></div>
-    <div class="lightbox-content">
-        <button class="lightbox-close" id="lightboxClose" aria-label="Close lightbox">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-            </svg>
-        </button>
-        
-        <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous image">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-            </svg>
-        </button>
-        
-        <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next image">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
-            </svg>
-        </button>
-        
-        <div class="lightbox-image-container">
-            <img class="lightbox-image" id="lightboxImage" alt="Gallery image">
-            <div class="lightbox-caption" id="lightboxCaption"></div>
-        </div>
-        
-        <div class="lightbox-counter" id="lightboxCounter"></div>
-    </div>
-</div>
+<!-- LIGHTBOX MOVED TO END OF FILE - OUTSIDE MAIN CONTENT -->
 
 <script>
 // Gallery images data - populated from Jekyll data
@@ -654,14 +627,86 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<!-- Load simplified lightbox JavaScript -->
-<script src="/assets/js/lightbox.js"></script>
+<!-- NEW LIGHTBOX JAVASCRIPT - COMPLETE REWRITE -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('lightboxModal');
+    const image = document.getElementById('lightboxImage');
+    const caption = document.getElementById('lightboxCaption');
+    const closeBtn = document.getElementById('lightboxClose');
+    const prevBtn = document.getElementById('lightboxPrev');
+    const nextBtn = document.getElementById('lightboxNext');
+    
+    let currentIndex = 0;
+    
+    // Gallery item clicks
+    document.querySelectorAll('.gallery-item').forEach((item, index) => {
+        item.addEventListener('click', () => openLightbox(index));
+    });
+    
+    // Close button
+    closeBtn.addEventListener('click', closeLightbox);
+    
+    // Navigation buttons
+    prevBtn.addEventListener('click', () => navigate(-1));
+    nextBtn.addEventListener('click', () => navigate(1));
+    
+    // Modal click to close
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeLightbox();
+    });
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (modal.style.display === 'none') return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') navigate(-1);
+        if (e.key === 'ArrowRight') navigate(1);
+    });
+    
+    function openLightbox(index) {
+        currentIndex = index;
+        const img = window.galleryImages[index];
+        image.src = img.src;
+        image.alt = img.alt;
+        caption.textContent = img.caption;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeLightbox() {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    
+    function navigate(direction) {
+        currentIndex += direction;
+        if (currentIndex < 0) currentIndex = window.galleryImages.length - 1;
+        if (currentIndex >= window.galleryImages.length) currentIndex = 0;
+        openLightbox(currentIndex);
+    }
+});
+</script>
+
+<!-- Lightbox HTML is now in the default layout -->
     </div>
 </article>
 
         </main>
     </div>
     
+    <!-- Lightbox Modal - Available on all pages -->
+    <div id="lightboxModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); z-index: 9999;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: calc(100vw - 140px); max-height: calc(100vh - 40px); display: flex; flex-direction: column; align-items: center;">
+            <img id="lightboxImage" style="max-width: 100%; max-height: calc(100vh - 120px); object-fit: contain; border-radius: 8px;" alt="">
+            <div id="lightboxCaption" style="margin-top: 20px; padding: 10px 20px; background: rgba(255, 255, 255, 0.9); color: #000; border-radius: 20px; font-size: 14px; text-align: center;"></div>
+        </div>
+        
+        <button id="lightboxClose" style="position: absolute !important; top: 5px !important; right: 5px !important; width: 40px; height: 40px; background: rgba(255, 255, 255, 0.9); border: none; border-radius: 50%; font-size: 24px; cursor: pointer; z-index: 10000;">×</button>
+        <button id="lightboxPrev" style="position: absolute !important; top: 50% !important; left: 5px !important; transform: translateY(-50%); width: 50px; height: 50px; background: rgba(255, 255, 255, 0.9); border: none; border-radius: 50%; font-size: 24px; cursor: pointer; z-index: 10000;">‹</button>
+        <button id="lightboxNext" style="position: absolute !important; top: 50% !important; right: 5px !important; transform: translateY(-50%); width: 50px; height: 50px; background: rgba(255, 255, 255, 0.9); border: none; border-radius: 50%; font-size: 24px; cursor: pointer; z-index: 10000;">›</button>
+    </div>
+
     <!-- JavaScript -->
     <script src="/assets/js/navigation.js"></script>
     <script src="/assets/js/main.js"></script>

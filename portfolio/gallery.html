@@ -26,8 +26,8 @@ Supported formats: .jpg, .jpeg, .png, .gif, .webp, .bmp, .tiff
 -->
 
 <div class="gallery-header">
-    <h2>About the Collection</h2>
-    <p>This collection represents my journey through street photography and urban landscapes, focusing on the interplay between architecture, light, and human presence in urban environments.</p>
+<h2>About the Collection</h2>
+<p>This collection represents my journey through street photography and urban landscapes, focusing on the interplay between architecture, light, and human presence in urban environments.</p>
 </div>
 
 <div class="gallery-container">
@@ -58,36 +58,7 @@ Supported formats: .jpg, .jpeg, .png, .gif, .webp, .bmp, .tiff
     </div>
 </div>
 
-<!-- Lightbox Modal -->
-<div class="lightbox-modal" id="lightboxModal">
-    <div class="lightbox-overlay" id="lightboxOverlay"></div>
-    <div class="lightbox-content">
-        <button class="lightbox-close" id="lightboxClose" aria-label="Close lightbox">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-            </svg>
-        </button>
-        
-        <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous image">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-            </svg>
-        </button>
-        
-        <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next image">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
-            </svg>
-        </button>
-        
-        <div class="lightbox-image-container">
-            <img class="lightbox-image" id="lightboxImage" alt="Gallery image">
-            <div class="lightbox-caption" id="lightboxCaption"></div>
-        </div>
-        
-        <div class="lightbox-counter" id="lightboxCounter"></div>
-    </div>
-</div>
+<!-- LIGHTBOX MOVED TO END OF FILE - OUTSIDE MAIN CONTENT -->
 
 <script>
 // Gallery images data - populated from Jekyll data
@@ -393,5 +364,65 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<!-- Load simplified lightbox JavaScript -->
-<script src="/assets/js/lightbox.js"></script>
+<!-- NEW LIGHTBOX JAVASCRIPT - COMPLETE REWRITE -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('lightboxModal');
+    const image = document.getElementById('lightboxImage');
+    const caption = document.getElementById('lightboxCaption');
+    const closeBtn = document.getElementById('lightboxClose');
+    const prevBtn = document.getElementById('lightboxPrev');
+    const nextBtn = document.getElementById('lightboxNext');
+    
+    let currentIndex = 0;
+    
+    // Gallery item clicks
+    document.querySelectorAll('.gallery-item').forEach((item, index) => {
+        item.addEventListener('click', () => openLightbox(index));
+    });
+    
+    // Close button
+    closeBtn.addEventListener('click', closeLightbox);
+    
+    // Navigation buttons
+    prevBtn.addEventListener('click', () => navigate(-1));
+    nextBtn.addEventListener('click', () => navigate(1));
+    
+    // Modal click to close
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeLightbox();
+    });
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (modal.style.display === 'none') return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') navigate(-1);
+        if (e.key === 'ArrowRight') navigate(1);
+    });
+    
+    function openLightbox(index) {
+        currentIndex = index;
+        const img = window.galleryImages[index];
+        image.src = img.src;
+        image.alt = img.alt;
+        caption.textContent = img.caption;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeLightbox() {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    
+    function navigate(direction) {
+        currentIndex += direction;
+        if (currentIndex < 0) currentIndex = window.galleryImages.length - 1;
+        if (currentIndex >= window.galleryImages.length) currentIndex = 0;
+        openLightbox(currentIndex);
+    }
+});
+</script>
+
+<!-- Lightbox HTML is now in the default layout -->

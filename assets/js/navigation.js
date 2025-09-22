@@ -1,6 +1,7 @@
 // Navigation JavaScript for Jekyll Site
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Navigation JavaScript loaded');
     // Mobile navigation toggle
     const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
     const sidebar = document.querySelector('.sidebar');
@@ -50,8 +51,21 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle navigation active states
     const currentPath = window.location.pathname;
+    console.log('Current path:', currentPath);
+    console.log('Current URL:', window.location.href);
     const navLinks = document.querySelectorAll('.nav-link, .submenu-link');
     const navItems = document.querySelectorAll('.nav-item');
+    console.log('Found nav links:', navLinks.length);
+    console.log('Found nav items:', navItems.length);
+    
+    // Normalize current path for comparison (moved outside the loop)
+    const normalizedCurrentPath = currentPath.replace(/\/$/, '');
+    console.log('Normalized current path:', normalizedCurrentPath);
+    
+    // Debug: Log all nav links and their hrefs
+    navLinks.forEach((link, index) => {
+        console.log(`Nav link ${index}:`, link.textContent.trim(), 'href:', link.getAttribute('href'));
+    });
     
     // First, remove all active states
     navItems.forEach(item => {
@@ -60,39 +74,51 @@ document.addEventListener('DOMContentLoaded', function() {
         itemLinks.forEach(link => link.classList.remove('active'));
     });
     
-    // Find the active section
+    // Find the active section based on submenu links only
     let activeSection = null;
     
     navLinks.forEach(link => {
         const linkPath = link.getAttribute('href');
         
+        // Skip links without href (main menu labels)
+        if (!linkPath) {
+            console.log(`Skipping link without href: "${link.textContent.trim()}"`);
+            return;
+        }
+        
         // Remove trailing slash for comparison
-        const normalizedCurrentPath = currentPath.replace(/\/$/, '');
         const normalizedLinkPath = linkPath.replace(/\/$/, '');
         
         // Check if current page matches this link
+        console.log(`Checking link: "${link.textContent.trim()}" (${normalizedLinkPath}) against current path: ${normalizedCurrentPath}`);
+        
         if (normalizedCurrentPath === normalizedLinkPath || 
             (normalizedCurrentPath.startsWith(normalizedLinkPath) && normalizedLinkPath !== '/')) {
+            console.log('MATCH FOUND!', link.textContent.trim());
             link.classList.add('active');
             
             // If it's a submenu link, mark the parent section as active
             const parentNavItem = link.closest('.nav-item');
             if (parentNavItem) {
-                const parentLink = parentNavItem.querySelector('.nav-link');
+                const parentLink = parentNavItem.querySelector('.nav-link, .nav-label');
                 if (parentLink) {
                     parentLink.classList.add('active');
                     activeSection = parentNavItem;
+                    console.log('Found active submenu link:', link.textContent, 'Parent:', parentLink.textContent);
                 }
-            } else {
-                // If it's a main nav link, mark this section as active
-                activeSection = link.closest('.nav-item');
             }
         }
     });
     
+    // Note: Removed special case for root page - all submenus should be closed by default
+    
     // Set the active section
     if (activeSection) {
         activeSection.classList.add('active-section');
+        const sectionName = activeSection.querySelector('.nav-link, .nav-label');
+        console.log('Active section set:', sectionName ? sectionName.textContent : 'Unknown');
+    } else {
+        console.log('No active section found for path:', currentPath);
     }
     
     // Smooth scrolling for anchor links
@@ -109,40 +135,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Add hover effects for navigation items
-    navItems.forEach(item => {
-        const navLink = item.querySelector('.nav-link');
-        const submenu = item.querySelector('.submenu');
-        
-        if (submenu) {
-            // Show submenu on hover/focus (but not if it's the active section)
-            item.addEventListener('mouseenter', function() {
-                if (!item.classList.contains('active-section')) {
-                    submenu.style.maxHeight = submenu.scrollHeight + 'px';
-                }
-            });
-            
-            item.addEventListener('mouseleave', function() {
-                if (!item.classList.contains('active-section')) {
-                    submenu.style.maxHeight = '0';
-                }
-            });
-            
-            // Handle focus events for accessibility
-            item.addEventListener('focusin', function() {
-                if (!item.classList.contains('active-section')) {
-                    submenu.style.maxHeight = submenu.scrollHeight + 'px';
-                }
-            });
-            
-            item.addEventListener('focusout', function() {
-                // Only hide if focus is not within the submenu and not active section
-                if (!submenu.contains(document.activeElement) && !item.classList.contains('active-section')) {
-                    submenu.style.maxHeight = '0';
-                }
-            });
-        }
-    });
+    // Note: Hover effects are now handled entirely by CSS
+    // JavaScript no longer interferes with submenu visibility
     
     // Keyboard navigation support
     document.addEventListener('keydown', function(event) {
