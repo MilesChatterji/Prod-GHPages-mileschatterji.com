@@ -165,8 +165,10 @@
 /* Responsive Design */
 @media (max-width: 768px) {
     .sidebar {
+        width: 100vw !important;
         transform: translateX(-100%);
         transition: transform var(--transition-speed) ease;
+        z-index: 1002;
     }
     
     .sidebar.open {
@@ -198,6 +200,22 @@
     
     .sidebar.open::before {
         opacity: 1;
+    }
+    
+    /* Mobile-specific navigation styling */
+    .nav-link {
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+    }
+    
+    .submenu-link {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .site-title {
+        font-size: 1.8rem;
+        padding: 2rem 1.5rem 1.5rem;
     }
 }
 
