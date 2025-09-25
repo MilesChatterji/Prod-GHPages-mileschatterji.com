@@ -1105,21 +1105,58 @@ class PhotoGallery {
     }
     
     preloadImages() {
-        // Preload images for better performance
-        this.images.forEach((image, index) => {
+        // Preload only first few images for better mobile performance
+        const maxPreload = Math.min(4, this.images.length);
+        
+        for (let i = 0; i < maxPreload; i++) {
             const img = new Image();
             img.onload = () => {
-                this.loadedImages.add(index);
+                this.loadedImages.add(i);
                 // Update loading state if this is the first image
-                if (index === 0) {
+                if (i === 0) {
                     this.updateLoadingState();
                 }
             };
             img.onerror = () => {
-                console.warn(`Failed to load image: ${image.src}`);
+                console.warn(`Failed to load image: ${this.images[i].src}`);
             };
-            img.src = image.src;
-        });
+            img.src = this.images[i].src;
+        }
+        
+        // Set up intersection observer for lazy loading remaining images
+        this.setupLazyLoading();
+    }
+    
+    setupLazyLoading() {
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const index = parseInt(entry.target.dataset.index);
+                        if (!this.loadedImages.has(index)) {
+                            const img = new Image();
+                            img.onload = () => {
+                                this.loadedImages.add(index);
+                            };
+                            img.onerror = () => {
+                                console.warn(`Failed to lazy load image: ${this.images[index].src}`);
+                            };
+                            img.src = this.images[index].src;
+                        }
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                rootMargin: '50px 0px', // Start loading 50px before image comes into view
+                threshold: 0.1
+            });
+            
+            // Observe all gallery images
+            document.querySelectorAll('.gallery-image').forEach((img, index) => {
+                img.dataset.index = index;
+                imageObserver.observe(img);
+            });
+        }
     }
     
     updateLoadingState() {
@@ -1196,7 +1233,7 @@ class PhotoGallery {
         }
         
         // Show modal
-        modal.classList.add('active');
+        modal.style.display = 'flex';
         document.body.classList.add('modal-open');
         
         // Focus management
@@ -1207,7 +1244,7 @@ class PhotoGallery {
         const modal = document.getElementById('lightboxModal');
         if (!modal) return;
         
-        modal.classList.remove('active');
+        modal.style.display = 'none';
         document.body.classList.remove('modal-open');
         this.isLightboxOpen = false;
     }
@@ -1375,66 +1412,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<!-- NEW LIGHTBOX JAVASCRIPT - COMPLETE REWRITE -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('lightboxModal');
-    const image = document.getElementById('lightboxImage');
-    const caption = document.getElementById('lightboxCaption');
-    const closeBtn = document.getElementById('lightboxClose');
-    const prevBtn = document.getElementById('lightboxPrev');
-    const nextBtn = document.getElementById('lightboxNext');
-    
-    let currentIndex = 0;
-    
-    // Gallery item clicks
-    document.querySelectorAll('.gallery-item').forEach((item, index) => {
-        item.addEventListener('click', () => openLightbox(index));
-    });
-    
-    // Close button
-    closeBtn.addEventListener('click', closeLightbox);
-    
-    // Navigation buttons
-    prevBtn.addEventListener('click', () => navigate(-1));
-    nextBtn.addEventListener('click', () => navigate(1));
-    
-    // Modal click to close
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeLightbox();
-    });
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-        if (modal.style.display === 'none') return;
-        if (e.key === 'Escape') closeLightbox();
-        if (e.key === 'ArrowLeft') navigate(-1);
-        if (e.key === 'ArrowRight') navigate(1);
-    });
-    
-    function openLightbox(index) {
-        currentIndex = index;
-        const img = window.galleryImages[index];
-        image.src = img.src;
-        image.alt = img.alt;
-        caption.textContent = img.caption;
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-    
-    function closeLightbox() {
-        modal.style.display = 'none';
-        document.body.style.overflow = '';
-    }
-    
-    function navigate(direction) {
-        currentIndex += direction;
-        if (currentIndex < 0) currentIndex = window.galleryImages.length - 1;
-        if (currentIndex >= window.galleryImages.length) currentIndex = 0;
-        openLightbox(currentIndex);
-    }
-});
-</script>
+<!-- Duplicate lightbox JavaScript removed - using PhotoGallery class instead -->
 
 <!-- Lightbox HTML is now in the default layout -->
     </div>
@@ -1445,9 +1423,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     <!-- Lightbox Modal - Available on all pages -->
     <div id="lightboxModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); z-index: 9999;">
+        <div id="lightboxOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
         <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: calc(100vw - 140px); max-height: calc(100vh - 40px); display: flex; flex-direction: column; align-items: center;">
             <img id="lightboxImage" style="max-width: 100%; max-height: calc(100vh - 120px); object-fit: contain; border-radius: 8px;" alt="">
             <div id="lightboxCaption" style="margin-top: 20px; padding: 10px 20px; background: rgba(255, 255, 255, 0.9); color: #000; border-radius: 20px; font-size: 14px; text-align: center;"></div>
+            <div id="lightboxCounter" style="margin-top: 10px; padding: 5px 15px; background: rgba(255, 255, 255, 0.9); color: #000; border-radius: 15px; font-size: 12px; text-align: center;"></div>
         </div>
         
         <button id="lightboxClose" style="position: absolute !important; top: 5px !important; right: 5px !important; width: 40px; height: 40px; background: rgba(255, 255, 255, 0.9); border: none; border-radius: 50%; font-size: 24px; cursor: pointer; z-index: 10000;">×</button>
