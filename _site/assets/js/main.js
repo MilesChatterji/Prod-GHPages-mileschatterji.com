@@ -39,11 +39,6 @@ function initializeSite() {
     // Initialize tooltips for social links
     initializeTooltips();
     
-    // Add copy functionality for code blocks
-    initializeCodeCopy();
-    
-    // Initialize search functionality
-    initializeSearch();
 }
 
 function initializePageTransitions() {
@@ -88,7 +83,8 @@ function initializeLazyLoading() {
             });
         });
         
-        document.querySelectorAll('img[data-src]').forEach(img => {
+        const lazyImages = document.querySelectorAll('img[data-src]');
+        lazyImages.forEach(img => {
             imageObserver.observe(img);
         });
     }
@@ -146,63 +142,9 @@ function initializeTooltips() {
     });
 }
 
-function initializeCodeCopy() {
-    // Add copy button to code blocks
-    const codeBlocks = document.querySelectorAll('pre code');
-    
-    codeBlocks.forEach(block => {
-        const copyButton = document.createElement('button');
-        copyButton.className = 'copy-button';
-        copyButton.textContent = 'Copy';
-        copyButton.setAttribute('aria-label', 'Copy code to clipboard');
-        
-        const pre = block.parentElement;
-        pre.style.position = 'relative';
-        pre.appendChild(copyButton);
-        
-        copyButton.addEventListener('click', async function() {
-            try {
-                await navigator.clipboard.writeText(block.textContent);
-                copyButton.textContent = 'Copied!';
-                copyButton.classList.add('copied');
-                
-                setTimeout(() => {
-                    copyButton.textContent = 'Copy';
-                    copyButton.classList.remove('copied');
-                }, 2000);
-            } catch (err) {
-                console.error('Failed to copy code:', err);
-                copyButton.textContent = 'Failed';
-            }
-        });
-    });
-}
 
-function initializeSearch() {
-    // Simple search functionality for portfolio items
-    const searchInput = document.querySelector('.search-input');
-    if (!searchInput) return;
-    
-    const portfolioItems = document.querySelectorAll('.portfolio-item');
-    
-    searchInput.addEventListener('input', function() {
-        const query = this.value.toLowerCase().trim();
-        
-        portfolioItems.forEach(item => {
-            const title = item.querySelector('.portfolio-title')?.textContent.toLowerCase() || '';
-            const content = item.querySelector('.portfolio-content')?.textContent.toLowerCase() || '';
-            const tags = Array.from(item.querySelectorAll('.tag')).map(tag => tag.textContent.toLowerCase());
-            
-            const matches = title.includes(query) || 
-                           content.includes(query) || 
-                           tags.some(tag => tag.includes(query));
-            
-            item.style.display = matches ? 'block' : 'none';
-        });
-    });
-}
 
-// Typewriter Animation
+// Typewriter Animation - Modern async/await implementation
 function initializeTypewriterAnimation() {
     const heroTitle = document.querySelector('.hero-title');
     const heroSubtitle = document.querySelector('.hero-subtitle');
@@ -213,37 +155,47 @@ function initializeTypewriterAnimation() {
         const subtitleText = heroSubtitle.textContent;
         heroTitle.textContent = '';
         heroSubtitle.textContent = '';
-        typeText(heroTitle, titleText, 0, () => {
-            setTimeout(() => {
-                typeText(heroSubtitle, subtitleText, 0, () => {
-                    // After hero subtitle, animate page title if present
-                    if (pageTitle) animateSingle(pageTitle);
-                });
-            }, 500);
-        });
+        
+        // Use async/await for cleaner sequential execution
+        animateSequence();
+        
+        async function animateSequence() {
+            await typeTextAsync(heroTitle, titleText);
+            await delay(500);
+            await typeTextAsync(heroSubtitle, subtitleText);
+            if (pageTitle) {
+                await delay(500);
+                await animateSingleAsync(pageTitle);
+            }
+        }
     } else if (pageTitle) {
-        // If no hero elements, animate page title directly
-        animateSingle(pageTitle);
+        animateSingleAsync(pageTitle);
     }
 }
 
-function animateSingle(element) {
+async function animateSingleAsync(element) {
     const text = element.textContent;
     element.textContent = '';
-    typeText(element, text, 0);
+    await typeTextAsync(element, text);
 }
 
-function typeText(element, text, index, callback) {
-    if (index < text.length) {
-        element.textContent += text.charAt(index);
-        setTimeout(() => {
-            typeText(element, text, index + 1, callback);
-        }, 100); // Adjust speed here (lower = faster)
-    } else {
-        // Remove the cursor after typing is complete
-        element.style.borderRight = 'none';
-        if (callback) callback();
-    }
+function typeTextAsync(element, text, speed = 100) {
+    return new Promise((resolve) => {
+        let index = 0;
+        const timer = setInterval(() => {
+            if (index < text.length) {
+                element.textContent += text.charAt(index);
+                index++;
+            } else {
+                clearInterval(timer);
+                resolve();
+            }
+        }, speed);
+    });
+}
+
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 // Utility functions
@@ -354,7 +306,6 @@ class PortfolioCarousel {
         this.slideCount = this.slides.length;
         this.visibleSlides = 3;
         
-        console.log(`Carousel initialized with ${this.slideCount} slides`);
         
         this.init();
     }
@@ -362,7 +313,6 @@ class PortfolioCarousel {
     init() {
         if (this.slideCount === 0) return;
         
-        console.log(`Initializing carousel with ${this.slideCount} slides`);
         
         // Set initial state
         this.updateCarousel();
@@ -410,7 +360,6 @@ class PortfolioCarousel {
         this.prevBtn.style.opacity = this.currentIndex === 0 ? '0.5' : '1';
         this.nextBtn.style.opacity = this.currentIndex >= Math.max(0, this.slideCount - this.visibleSlides) ? '0.5' : '1';
         
-        console.log(`Carousel: ${this.slideCount} slides, current index: ${this.currentIndex}, transform: ${transformValue}%`);
     }
     
 
@@ -432,7 +381,6 @@ class PortfolioCarousel {
         if (this.currentIndex > 0) {
             this.currentIndex = Math.max(0, this.currentIndex - this.visibleSlides);
             this.updateCarousel();
-            console.log(`Previous: index ${this.currentIndex}`);
         }
     }
     
@@ -441,7 +389,6 @@ class PortfolioCarousel {
         if (this.currentIndex < maxIndex) {
             this.currentIndex = Math.min(maxIndex, this.currentIndex + this.visibleSlides);
             this.updateCarousel();
-            console.log(`Next: index ${this.currentIndex}`);
         }
     }
     
@@ -490,7 +437,6 @@ class VideoCarousel {
         this.slideCount = this.slides.length;
         this.visibleSlides = 3;
         
-        console.log(`Video carousel initialized with ${this.slideCount} videos`);
         
         this.init();
     }
@@ -498,7 +444,6 @@ class VideoCarousel {
     init() {
         if (this.slideCount === 0) return;
         
-        console.log(`Initializing video carousel with ${this.slideCount} videos`);
         
         // Set initial state
         this.updateCarousel();
@@ -554,7 +499,6 @@ class VideoCarousel {
             }
         });
         
-        console.log(`Video carousel: ${this.slideCount} videos, current index: ${this.currentIndex}, transform: ${transformValue}%`);
     }
     
     updateVideoPlayer() {
@@ -568,7 +512,6 @@ class VideoCarousel {
         this.videoPlayer.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
         this.videoTitle.textContent = videoTitle;
         
-        console.log(`Video player updated: ${videoId} - ${videoTitle}`);
     }
     
     previousSlide() {
@@ -576,7 +519,6 @@ class VideoCarousel {
             this.currentIndex = Math.max(0, this.currentIndex - this.visibleSlides);
             this.updateCarousel();
             this.updateVideoPlayer();
-            console.log(`Previous video: index ${this.currentIndex}`);
         }
     }
     
@@ -586,7 +528,6 @@ class VideoCarousel {
             this.currentIndex = Math.min(maxIndex, this.currentIndex + this.visibleSlides);
             this.updateCarousel();
             this.updateVideoPlayer();
-            console.log(`Next video: index ${this.currentIndex}`);
         }
     }
     
@@ -594,7 +535,6 @@ class VideoCarousel {
         this.currentIndex = index;
         this.updateCarousel();
         this.updateVideoPlayer();
-        console.log(`Selected video: index ${index}`);
     }
     
     addTouchSupport() {
@@ -722,7 +662,7 @@ async function loadPodcastEpisodes() {
     const episodesGrid = document.getElementById('episodes-grid');
     
     // Declare variables outside try block for error handling
-    const rssUrl = 'https://shows.acast.com/fml/rss';
+    const rssUrl = 'https://feeds.acast.com/public/shows/68c5be286078db920133c8ac';
     const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`;
     
     try {
@@ -738,6 +678,8 @@ async function loadPodcastEpisodes() {
         
         const rssText = await response.text();
         console.log('Fetched RSS feed:', rssText.substring(0, 500)); // Debug logging
+        console.log('RSS feed length:', rssText.length);
+        console.log('RSS feed starts with:', rssText.substring(0, 100));
         const episodes = parseRSSFeed(rssText);
         
         // Display episodes
@@ -769,6 +711,8 @@ function parseRSSFeed(rssText) {
     // Check for parsing errors
     const parseError = xmlDoc.querySelector('parsererror');
     if (parseError) {
+        console.error('RSS parsing error:', parseError.textContent);
+        console.error('RSS content that failed to parse:', rssText.substring(0, 1000));
         throw new Error('Failed to parse RSS feed');
     }
     
@@ -1060,7 +1004,6 @@ async function fetchArticlePreview(url) {
         }
         
         const html = await response.text();
-        console.log('Fetched HTML for Medium article:', html.substring(0, 500)); // Log first 500 chars for debugging
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         
@@ -1094,7 +1037,6 @@ async function fetchArticlePreview(url) {
             readTime: readTime ? cleanText(readTime) : null
         };
         
-        console.log('Extracted metadata:', result); // Debug logging
         return result;
         
     } catch (error) {

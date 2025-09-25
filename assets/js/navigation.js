@@ -1,7 +1,6 @@
 // Navigation JavaScript for Jekyll Site
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Navigation JavaScript loaded');
     // Mobile navigation toggle
     const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
     const sidebar = document.querySelector('.sidebar');
@@ -199,30 +198,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 250);
     });
     
-    // Add intersection observer for scroll-based animations - TEMPORARILY DISABLED FOR MOBILE TESTING
-    /*
-    if ('IntersectionObserver' in window) {
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-        
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-        
-        // Observe main content sections
-        document.querySelectorAll('.page, .post, .portfolio-item').forEach(section => {
-            section.style.opacity = '0';
-            section.style.transform = 'translateY(20px)';
-            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(section);
-        });
-    }
-    */
 });
