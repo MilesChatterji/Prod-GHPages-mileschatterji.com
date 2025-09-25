@@ -28,8 +28,16 @@ jobs:
       run: |
         bundle exec jekyll build --verbose
 
+    - name: Setup Pages
+      if: github.ref == 'refs/heads/main'
+      uses: actions/configure-pages@v4
+
+    - name: Upload artifact
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./_site
+
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
       uses: actions/deploy-pages@v4
-      with:
-        path: ./_site
