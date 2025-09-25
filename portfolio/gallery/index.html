@@ -1233,7 +1233,7 @@ class PhotoGallery {
         }
         
         // Show modal
-        modal.classList.add('active');
+        modal.style.display = 'flex';
         document.body.classList.add('modal-open');
         
         // Focus management
@@ -1244,7 +1244,7 @@ class PhotoGallery {
         const modal = document.getElementById('lightboxModal');
         if (!modal) return;
         
-        modal.classList.remove('active');
+        modal.style.display = 'none';
         document.body.classList.remove('modal-open');
         this.isLightboxOpen = false;
     }
