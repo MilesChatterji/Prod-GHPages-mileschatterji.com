@@ -879,6 +879,40 @@ a:hover {
         font-size: 1rem;
     }
     
+    /* Mobile-specific lightbox adjustments */
+    #lightboxModal {
+        padding: 10px !important;
+    }
+    
+    #lightboxModal > div {
+        max-width: calc(100vw - 20px) !important;
+        max-height: calc(100vh - 20px) !important;
+    }
+    
+    #lightboxImage {
+        max-height: calc(100vh - 100px) !important;
+    }
+    
+    #lightboxClose,
+    #lightboxPrev,
+    #lightboxNext {
+        width: 44px !important;
+        height: 44px !important;
+        font-size: 20px !important;
+    }
+    
+    #lightboxClose {
+        top: 10px !important;
+        right: 10px !important;
+    }
+    
+    #lightboxPrev {
+        left: 10px !important;
+    }
+    
+    #lightboxNext {
+        right: 10px !important;
+    }
 }
 
 /* Tags */
