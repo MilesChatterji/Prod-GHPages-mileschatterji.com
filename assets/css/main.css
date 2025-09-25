@@ -292,6 +292,11 @@ a:hover {
     margin: 0 auto;
 }
 
+/* Gallery page needs more space */
+.page.gallery-page {
+    max-width: 1200px;
+}
+
 .page-header, .post-header, .portfolio-header {
     margin-bottom: 2rem;
     padding-bottom: 1rem;
@@ -306,11 +311,55 @@ a:hover {
 /* Add typewriter animation to page-title */
 .page-title {
     overflow: hidden;
-    border-right: 3px solid var(--accent-primary);
     white-space: nowrap;
-    animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
+    text-align: left;
+    animation: typing-reveal 2s steps(40, end);
     animation-fill-mode: forwards;
     opacity: 0;
+}
+
+/* Add typewriter animation to post-title */
+.post-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
+    animation: typing-reveal 2s steps(40, end);
+    animation-fill-mode: forwards;
+    opacity: 0;
+}
+
+/* Add typewriter animation to portfolio-title */
+.portfolio-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
+    animation: typing-reveal 2s steps(40, end);
+    animation-fill-mode: forwards;
+    opacity: 0;
+}
+
+/* Add typewriter animation to main section h2 tags */
+.writing-header h2,
+.gallery-header h2,
+.podcast-header h2,
+.contact-intro h2,
+.biography-intro h2,
+.portfolio-intro h2 {
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: center;
+    animation: typing-reveal 2s steps(40, end);
+    animation-fill-mode: forwards;
+    opacity: 0;
+    margin: 0 auto;
+    display: block;
+}
+
+/* Biography intro h2 should be left-aligned */
+.biography-intro h2 {
+    text-align: left;
+    margin: 0;
+    width: auto;
 }
 
 .page-subtitle, .post-subtitle, .portfolio-subtitle {
@@ -860,7 +909,6 @@ a:hover {
     .gallery-caption {
         padding: 1rem;
     }
-    
 }
 
 @media (max-width: 480px) {
@@ -1019,10 +1067,9 @@ a:hover {
     text-shadow: 0 2px 4px var(--shadow-color);
     /* Typewriter animation setup */
     overflow: hidden;
-    border-right: 3px solid var(--accent-primary);
     white-space: nowrap;
     margin: 0 auto;
-    animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
+    animation: typing 2s steps(40, end);
     animation-fill-mode: forwards;
     opacity: 0;
 }
@@ -1035,10 +1082,9 @@ a:hover {
     font-weight: normal;
     /* Typewriter animation setup */
     overflow: hidden;
-    border-right: 3px solid var(--accent-primary);
     white-space: nowrap;
     margin: 0 auto;
-    animation: typing 2s steps(40, end) 0.5s, blink-caret 0.75s step-end infinite 0.5s;
+    animation: typing 2s steps(40, end) 0.5s;
     animation-fill-mode: forwards;
     opacity: 0;
 }
@@ -1054,6 +1100,19 @@ a:hover {
         opacity: 1;
     }
 }
+
+/* Typewriter reveal animation - reveals text from left to right without moving element */
+@keyframes typing-reveal {
+    from {
+        opacity: 1;
+        clip-path: inset(0 100% 0 0);
+    }
+    to {
+        opacity: 1;
+        clip-path: inset(0 0% 0 0);
+    }
+}
+
 
 @keyframes blink-caret {
     from, to {
@@ -2327,10 +2386,6 @@ a:hover {
     }
     
     .services-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .gallery-grid {
         grid-template-columns: 1fr;
     }
 }

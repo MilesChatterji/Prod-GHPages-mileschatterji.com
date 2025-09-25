@@ -199,7 +199,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 250);
     });
     
-    // Add intersection observer for scroll-based animations
+    // Add intersection observer for scroll-based animations - TEMPORARILY DISABLED FOR MOBILE TESTING
+    /*
     if ('IntersectionObserver' in window) {
         const observerOptions = {
             threshold: 0.1,
@@ -223,4 +224,5 @@ document.addEventListener('DOMContentLoaded', function() {
             observer.observe(section);
         });
     }
+    */
 });

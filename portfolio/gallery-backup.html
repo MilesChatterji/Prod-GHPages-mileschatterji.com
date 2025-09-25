@@ -1,0 +1,480 @@
+---
+layout: page
+title: Photo Gallery
+subtitle: A curated collection of my photography work
+---
+
+<!-- 
+DYNAMIC GALLERY SYSTEM
+======================
+
+This gallery automatically displays all images from /assets/images/gallery/
+No manual updates required!
+
+HOW IT WORKS:
+1. Jekyll plugin (_plugins/gallery_generator.rb) scans the gallery directory
+2. Generates data file (_data/gallery.yml) with all image information
+3. Liquid templating renders gallery items from the data
+4. JavaScript handles lightbox functionality
+
+TO ADD NEW IMAGES:
+1. Add image files to /assets/images/gallery/
+2. Run 'jekyll build' or 'jekyll serve'
+3. Images automatically appear in the gallery!
+
+Supported formats: .jpg, .jpeg, .png, .gif, .webp, .bmp, .tiff
+-->
+
+<div class="gallery-header">
+<h2>About the Collection</h2>
+<p>This collection represents my journey through street photography and urban landscapes, focusing on the interplay between architecture, light, and human presence in urban environments.</p>
+</div>
+
+<div class="gallery-container">
+    <div class="gallery-grid" id="galleryGrid">
+        {% if site.data.gallery and site.data.gallery.images %}
+            {% for image in site.data.gallery.images %}
+            <div class="gallery-item" data-index="{{ forloop.index0 }}">
+                <div class="gallery-image-container">
+                    <img class="gallery-image" src="{{ image.src }}" alt="{{ image.alt }}" loading="lazy">
+                    <div class="gallery-overlay">
+                        <div class="gallery-overlay-content">
+                            <div class="gallery-icon">🔍</div>
+                            <div class="gallery-text">View Image</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-caption">
+                    <p>{{ image.caption }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="gallery-loading">
+                <div class="loading-spinner"></div>
+                <p>No images found in gallery. Please add images to /assets/images/gallery/ and rebuild the site.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- LIGHTBOX MOVED TO END OF FILE - OUTSIDE MAIN CONTENT -->
+
+<script>
+// Gallery images data - populated from Jekyll data
+window.galleryImages = [
+    {% if site.data.gallery and site.data.gallery.images %}
+        {% for image in site.data.gallery.images %}
+        {
+            src: '{{ image.src }}',
+            alt: '{{ image.alt }}',
+            caption: '{{ image.caption }}',
+            filename: '{{ image.filename }}'
+        }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+    {% else %}
+        // Fallback empty array if no gallery data
+    {% endif %}
+];
+
+// Gallery functionality - using PhotoGallery class below
+    
+    init() {
+        this.preloadImages();
+        this.setupEventListeners();
+    }
+    
+    preloadImages() {
+        // Preload only first few images for better mobile performance
+        const maxPreload = Math.min(4, this.images.length);
+        
+        for (let i = 0; i < maxPreload; i++) {
+            const img = new Image();
+            img.onload = () => {
+                this.loadedImages.add(i);
+                // Update loading state if this is the first image
+                if (i === 0) {
+                    this.updateLoadingState();
+                }
+            };
+            img.onerror = () => {
+                console.warn(`Failed to load image: ${this.images[i].src}`);
+            };
+            img.src = this.images[i].src;
+        }
+        
+        // Set up intersection observer for lazy loading remaining images
+        this.setupLazyLoading();
+    }
+    
+    setupLazyLoading() {
+        // Disable lazy loading on mobile devices to prevent performance issues
+        const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            console.log('Mobile device detected - skipping lazy loading for performance');
+            return;
+        }
+        
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const index = parseInt(entry.target.dataset.index);
+                        if (!this.loadedImages.has(index)) {
+                            const img = new Image();
+                            img.onload = () => {
+                                this.loadedImages.add(index);
+                            };
+                            img.onerror = () => {
+                                console.warn(`Failed to lazy load image: ${this.images[index].src}`);
+                            };
+                            img.src = this.images[index].src;
+                        }
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                rootMargin: '50px 0px', // Start loading 50px before image comes into view
+                threshold: 0.1
+            });
+            
+            // Observe all gallery images
+            document.querySelectorAll('.gallery-image').forEach((img, index) => {
+                img.dataset.index = index;
+                imageObserver.observe(img);
+            });
+        }
+    }
+    
+    updateLoadingState() {
+        // Images are now rendered by Jekyll, so we don't need to hide loading manually
+        console.log(`Gallery loaded with ${this.images.length} images`);
+    }
+    
+    openLightbox(index) {
+        this.currentIndex = index;
+        this.isLightboxOpen = true;
+        
+        const modal = document.getElementById('lightboxModal');
+        const image = document.getElementById('lightboxImage');
+        const caption = document.getElementById('lightboxCaption');
+        
+        if (!modal || !image) return;
+        
+        // Update image with loading state
+        const currentImage = this.images[index];
+        image.style.opacity = '0.5';
+        image.style.transform = 'scale(0.95)';
+        
+        // Create optimized image for lightbox
+        const lightboxImg = new Image();
+        lightboxImg.onload = () => {
+            // Scale image for optimal viewing while maintaining aspect ratio
+            // Match CSS constraints: 90vw width, 80vh height
+            const maxWidth = window.innerWidth * 0.9;
+            const maxHeight = window.innerHeight * 0.8; // Match CSS max-height: 80vh
+            
+            let { width, height } = lightboxImg;
+            
+            // Calculate optimal dimensions
+            if (width > maxWidth || height > maxHeight) {
+                const widthRatio = maxWidth / width;
+                const heightRatio = maxHeight / height;
+                const ratio = Math.min(widthRatio, heightRatio);
+                
+                width = width * ratio;
+                height = height * ratio;
+            }
+            
+            // Apply optimized dimensions
+            image.style.width = `${width}px`;
+            image.style.height = `${height}px`;
+            image.src = currentImage.src;
+            image.alt = currentImage.alt;
+            
+            // Animate in
+            setTimeout(() => {
+                image.style.opacity = '1';
+                image.style.transform = 'scale(1)';
+            }, 50);
+        };
+        
+        lightboxImg.onerror = () => {
+            image.style.opacity = '1';
+            image.style.transform = 'scale(1)';
+            image.src = currentImage.src;
+            image.alt = 'Failed to load image';
+        };
+        
+        lightboxImg.src = currentImage.src;
+        
+        // Update caption
+        if (caption) {
+            caption.textContent = currentImage.caption;
+        }
+        
+        
+        // Show modal
+        modal.style.display = 'flex';
+        document.body.classList.add('modal-open');
+        
+        // Focus management
+        modal.focus();
+    }
+    
+    closeLightbox() {
+        const modal = document.getElementById('lightboxModal');
+        if (!modal) return;
+        
+        modal.style.display = 'none';
+        document.body.classList.remove('modal-open');
+        this.isLightboxOpen = false;
+    }
+    
+    navigateToImage(direction) {
+        if (!this.isLightboxOpen) return;
+        
+        if (direction === 'prev') {
+            this.currentIndex = this.currentIndex > 0 ? this.currentIndex - 1 : this.images.length - 1;
+        } else {
+            this.currentIndex = this.currentIndex < this.images.length - 1 ? this.currentIndex + 1 : 0;
+        }
+        
+        this.openLightbox(this.currentIndex);
+    }
+    
+    setupEventListeners() {
+        // Add click events to gallery items (generated by Jekyll)
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        galleryItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                this.openLightbox(index);
+            });
+        });
+        
+        // Close button
+        const closeBtn = document.getElementById('lightboxClose');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => this.closeLightbox());
+        }
+        
+        // Navigation buttons
+        const prevBtn = document.getElementById('lightboxPrev');
+        const nextBtn = document.getElementById('lightboxNext');
+        
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => this.navigateToImage('prev'));
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => this.navigateToImage('next'));
+        }
+        
+        // Overlay click to close
+        const overlay = document.getElementById('lightboxOverlay');
+        if (overlay) {
+            overlay.addEventListener('click', () => this.closeLightbox());
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (!this.isLightboxOpen) return;
+            
+            switch (e.key) {
+                case 'Escape':
+                    this.closeLightbox();
+                    break;
+                case 'ArrowLeft':
+                    this.navigateToImage('prev');
+                    break;
+                case 'ArrowRight':
+                    this.navigateToImage('next');
+                    break;
+            }
+        });
+        
+        // Touch/swipe support for mobile
+        let startX = 0;
+        let startY = 0;
+        
+        const modal = document.getElementById('lightboxModal');
+        if (modal) {
+            modal.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            });
+            
+            modal.addEventListener('touchend', (e) => {
+                if (!this.isLightboxOpen) return;
+                
+                const endX = e.changedTouches[0].clientX;
+                const endY = e.changedTouches[0].clientY;
+                const diffX = startX - endX;
+                const diffY = startY - endY;
+                
+                // Only handle horizontal swipes
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                    if (diffX > 0) {
+                        this.navigateToImage('next');
+                    } else {
+                        this.navigateToImage('prev');
+                    }
+                }
+            });
+        }
+    }
+}
+
+// PhotoGallery class for enhanced gallery functionality
+class PhotoGallery {
+    constructor() {
+        this.images = [];
+        this.currentIndex = 0;
+        this.modal = null;
+        this.imageElement = null;
+        this.captionElement = null;
+        this.prevButton = null;
+        this.nextButton = null;
+        this.closeButton = null;
+        this.overlay = null;
+        
+        this.init();
+    }
+    
+    init() {
+        this.setupElements();
+        this.loadImages();
+        this.setupEventListeners();
+    }
+    
+    setupElements() {
+        this.modal = document.getElementById('lightboxModal');
+        this.imageElement = document.getElementById('lightboxImage');
+        this.captionElement = document.getElementById('lightboxCaption');
+        this.prevButton = document.getElementById('lightboxPrev');
+        this.nextButton = document.getElementById('lightboxNext');
+        this.closeButton = document.getElementById('lightboxClose');
+        this.overlay = document.getElementById('lightboxOverlay');
+        
+        if (!this.modal || !this.imageElement || !this.captionElement) {
+            console.error('Required lightbox elements not found');
+            return;
+        }
+    }
+    
+    loadImages() {
+        try {
+            // Get images from Jekyll data
+            if (window.galleryImages && Array.isArray(window.galleryImages)) {
+                this.images = window.galleryImages;
+                console.log('Loaded', this.images.length, 'images from Jekyll data');
+            } else {
+                // Fallback: collect images from DOM
+                const galleryItems = document.querySelectorAll('.gallery-item');
+                this.images = Array.from(galleryItems).map((item, index) => {
+                    const img = item.querySelector('.gallery-image');
+                    const caption = item.querySelector('.gallery-caption p');
+                    return {
+                        src: img ? img.src : '',
+                        alt: img ? img.alt : '',
+                        caption: caption ? caption.textContent : ''
+                    };
+                });
+                console.log('Loaded', this.images.length, 'images from DOM');
+            }
+        } catch (error) {
+            console.error('Error loading images:', error);
+            // Don't replace gallery content, just log the error
+        }
+    }
+    
+    setupEventListeners() {
+        // Gallery item clicks
+        document.addEventListener('click', (e) => {
+            const galleryItem = e.target.closest('.gallery-item');
+            if (galleryItem) {
+                const index = parseInt(galleryItem.dataset.index);
+                this.openLightbox(index);
+            }
+        });
+        
+        // Lightbox controls
+        if (this.closeButton) {
+            this.closeButton.addEventListener('click', () => this.closeLightbox());
+        }
+        
+        if (this.prevButton) {
+            this.prevButton.addEventListener('click', () => this.previousImage());
+        }
+        
+        if (this.nextButton) {
+            this.nextButton.addEventListener('click', () => this.nextImage());
+        }
+        
+        if (this.overlay) {
+            this.overlay.addEventListener('click', () => this.closeLightbox());
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (this.modal && this.modal.style.display !== 'none') {
+                switch(e.key) {
+                    case 'Escape':
+                        this.closeLightbox();
+                        break;
+                    case 'ArrowLeft':
+                        this.previousImage();
+                        break;
+                    case 'ArrowRight':
+                        this.nextImage();
+                        break;
+                }
+            }
+        });
+    }
+    
+    openLightbox(index) {
+        if (index < 0 || index >= this.images.length) return;
+        
+        this.currentIndex = index;
+        const image = this.images[index];
+        
+        this.imageElement.src = image.src;
+        this.imageElement.alt = image.alt;
+        this.captionElement.textContent = image.caption;
+        
+        this.modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    closeLightbox() {
+        this.modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    
+    previousImage() {
+        const newIndex = this.currentIndex > 0 ? this.currentIndex - 1 : this.images.length - 1;
+        this.openLightbox(newIndex);
+    }
+    
+    nextImage() {
+        const newIndex = this.currentIndex < this.images.length - 1 ? this.currentIndex + 1 : 0;
+        this.openLightbox(newIndex);
+    }
+}
+
+// Initialize gallery when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        new PhotoGallery();
+        console.log('PhotoGallery initialized successfully');
+    } catch (error) {
+        console.error('Error initializing PhotoGallery:', error);
+    }
+});
+</script>
+
+<!-- Duplicate lightbox JavaScript removed - using PhotoGallery class instead -->
+
+<!-- Lightbox HTML is now in the default layout -->

@@ -1,0 +1,204 @@
+---
+layout: default
+title: Gallery
+description: A collection of street photography and urban landscapes
+---
+
+<div class="gallery-header">
+<h2>About the Collection</h2>
+<p>This collection represents my journey through street photography and urban landscapes, focusing on the interplay between architecture, light, and human presence in urban environments.</p>
+</div>
+
+<div class="gallery-container">
+    <div class="gallery-grid" id="galleryGrid">
+        {% if site.data.gallery and site.data.gallery.images %}
+            {% for image in site.data.gallery.images %}
+            <div class="gallery-item" data-index="{{ forloop.index0 }}">
+                <div class="gallery-image-container">
+                    <img class="gallery-image" src="{{ image.src }}" alt="{{ image.alt }}" loading="lazy">
+                    <div class="gallery-overlay">
+                        <div class="gallery-overlay-content">
+                            <div class="gallery-icon">🔍</div>
+                            <div class="gallery-text">View Image</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-caption">
+                    <p>{{ image.caption }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="gallery-loading">
+                <div class="loading-spinner"></div>
+                <p>No images found in gallery. Please add images to /assets/images/gallery/ and rebuild the site.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Gallery images data - populated from Jekyll data
+window.galleryImages = [
+    {% if site.data.gallery and site.data.gallery.images %}
+        {% for image in site.data.gallery.images %}
+        {
+            src: '{{ image.src }}',
+            alt: '{{ image.alt }}',
+            caption: '{{ image.caption }}',
+            filename: '{{ image.filename }}'
+        }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+    {% else %}
+        // Fallback empty array if no gallery data
+    {% endif %}
+];
+
+// PhotoGallery class for enhanced gallery functionality
+class PhotoGallery {
+    constructor() {
+        this.images = [];
+        this.currentIndex = 0;
+        this.modal = null;
+        this.imageElement = null;
+        this.captionElement = null;
+        this.prevButton = null;
+        this.nextButton = null;
+        this.closeButton = null;
+        this.overlay = null;
+        
+        this.init();
+    }
+    
+    init() {
+        this.setupElements();
+        this.loadImages();
+        this.setupEventListeners();
+    }
+    
+    setupElements() {
+        this.modal = document.getElementById('lightboxModal');
+        this.imageElement = document.getElementById('lightboxImage');
+        this.captionElement = document.getElementById('lightboxCaption');
+        this.prevButton = document.getElementById('lightboxPrev');
+        this.nextButton = document.getElementById('lightboxNext');
+        this.closeButton = document.getElementById('lightboxClose');
+        this.overlay = document.getElementById('lightboxOverlay');
+        
+        if (!this.modal || !this.imageElement || !this.captionElement) {
+            console.error('Required lightbox elements not found');
+            return;
+        }
+    }
+    
+    loadImages() {
+        try {
+            // Get images from Jekyll data
+            if (window.galleryImages && Array.isArray(window.galleryImages)) {
+                this.images = window.galleryImages;
+                console.log('Loaded', this.images.length, 'images from Jekyll data');
+            } else {
+                // Fallback: collect images from DOM
+                const galleryItems = document.querySelectorAll('.gallery-item');
+                this.images = Array.from(galleryItems).map((item, index) => {
+                    const img = item.querySelector('.gallery-image');
+                    const caption = item.querySelector('.gallery-caption p');
+                    return {
+                        src: img ? img.src : '',
+                        alt: img ? img.alt : '',
+                        caption: caption ? caption.textContent : ''
+                    };
+                });
+                console.log('Loaded', this.images.length, 'images from DOM');
+            }
+        } catch (error) {
+            console.error('Error loading images:', error);
+            // Don't replace gallery content, just log the error
+        }
+    }
+    
+    setupEventListeners() {
+        // Gallery item clicks
+        document.addEventListener('click', (e) => {
+            const galleryItem = e.target.closest('.gallery-item');
+            if (galleryItem) {
+                const index = parseInt(galleryItem.dataset.index);
+                this.openLightbox(index);
+            }
+        });
+        
+        // Lightbox controls
+        if (this.closeButton) {
+            this.closeButton.addEventListener('click', () => this.closeLightbox());
+        }
+        
+        if (this.prevButton) {
+            this.prevButton.addEventListener('click', () => this.previousImage());
+        }
+        
+        if (this.nextButton) {
+            this.nextButton.addEventListener('click', () => this.nextImage());
+        }
+        
+        if (this.overlay) {
+            this.overlay.addEventListener('click', () => this.closeLightbox());
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (this.modal && this.modal.style.display !== 'none') {
+                switch(e.key) {
+                    case 'Escape':
+                        this.closeLightbox();
+                        break;
+                    case 'ArrowLeft':
+                        this.previousImage();
+                        break;
+                    case 'ArrowRight':
+                        this.nextImage();
+                        break;
+                }
+            }
+        });
+    }
+    
+    openLightbox(index) {
+        if (index < 0 || index >= this.images.length) return;
+        
+        this.currentIndex = index;
+        const image = this.images[index];
+        
+        this.imageElement.src = image.src;
+        this.imageElement.alt = image.alt;
+        this.captionElement.textContent = image.caption;
+        
+        this.modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    closeLightbox() {
+        this.modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    
+    previousImage() {
+        const newIndex = this.currentIndex > 0 ? this.currentIndex - 1 : this.images.length - 1;
+        this.openLightbox(newIndex);
+    }
+    
+    nextImage() {
+        const newIndex = this.currentIndex < this.images.length - 1 ? this.currentIndex + 1 : 0;
+        this.openLightbox(newIndex);
+    }
+}
+
+// Initialize gallery when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        new PhotoGallery();
+        console.log('PhotoGallery initialized successfully');
+    } catch (error) {
+        console.error('Error initializing PhotoGallery:', error);
+    }
+});
+</script>

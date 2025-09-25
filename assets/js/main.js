@@ -721,15 +721,15 @@ async function loadPodcastEpisodes() {
     const containerElement = document.querySelector('.episodes-container');
     const episodesGrid = document.getElementById('episodes-grid');
     
+    // Declare variables outside try block for error handling
+    const rssUrl = 'https://shows.acast.com/fml/rss';
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`;
+    
     try {
         // Show loading state
         if (loadingElement) loadingElement.style.display = 'block';
         if (errorElement) errorElement.style.display = 'none';
         if (containerElement) containerElement.style.display = 'none';
-        
-        // Fetch RSS feed using CORS proxy
-        const rssUrl = 'https://feeds.acast.com/public/shows/68c5be286078db920133c8ac';
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`;
         
         const response = await fetch(proxyUrl);
         if (!response.ok) {
@@ -737,6 +737,7 @@ async function loadPodcastEpisodes() {
         }
         
         const rssText = await response.text();
+        console.log('Fetched RSS feed:', rssText.substring(0, 500)); // Debug logging
         const episodes = parseRSSFeed(rssText);
         
         // Display episodes
@@ -748,6 +749,11 @@ async function loadPodcastEpisodes() {
         
     } catch (error) {
         console.error('Error loading podcast episodes:', error);
+        console.error('Error details:', {
+            message: error.message,
+            stack: error.stack,
+            proxyUrl: proxyUrl
+        });
         
         // Show error state
         if (loadingElement) loadingElement.style.display = 'none';
@@ -1046,7 +1052,7 @@ async function loadMediumArticles() {
 async function fetchArticlePreview(url) {
     try {
         // Use a link preview service to get article metadata
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+        const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`;
         const response = await fetch(proxyUrl);
         
         if (!response.ok) {
@@ -1054,6 +1060,7 @@ async function fetchArticlePreview(url) {
         }
         
         const html = await response.text();
+        console.log('Fetched HTML for Medium article:', html.substring(0, 500)); // Log first 500 chars for debugging
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         
@@ -1079,13 +1086,16 @@ async function fetchArticlePreview(url) {
                         doc.querySelector('[data-testid="readingTime"]')?.textContent || 
                         null;
         
-        return {
+        const result = {
             title: cleanText(title),
             description: cleanText(description),
             imageUrl,
             publishedDate: publishedDate ? formatDate(publishedDate) : null,
             readTime: readTime ? cleanText(readTime) : null
         };
+        
+        console.log('Extracted metadata:', result); // Debug logging
+        return result;
         
     } catch (error) {
         console.error('Error fetching article preview:', error);
