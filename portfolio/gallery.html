@@ -160,7 +160,6 @@ class PhotoGallery {
         const modal = document.getElementById('lightboxModal');
         const image = document.getElementById('lightboxImage');
         const caption = document.getElementById('lightboxCaption');
-        const counter = document.getElementById('lightboxCounter');
         
         if (!modal || !image) return;
         
@@ -216,10 +215,6 @@ class PhotoGallery {
             caption.textContent = currentImage.caption;
         }
         
-        // Update counter
-        if (counter) {
-            counter.textContent = `${index + 1} / ${this.images.length}`;
-        }
         
         // Show modal
         modal.style.display = 'flex';
